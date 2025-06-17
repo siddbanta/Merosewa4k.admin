@@ -1,1046 +1,389 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Admin Pro - v2 Panel (Complete & Enchanted)</title>
+    <title>AtoZ Mobile - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        /* --- Professional Admin Panel CSS - Enhanced --- */
         :root {
-            --admin-primary: #007bff; --admin-primary-dark: #005cb3; --admin-primary-light: #66b0ff;
-            --admin-secondary: #343a40; --admin-secondary-light: #495057;
-            --admin-text-light: #f8f9fa; --admin-text-dark: #212529;
-            --admin-bg-main: #f4f6f9; /* Light grey for main content area */
-            --admin-bg-sidebar: var(--admin-secondary);
-            --admin-border-color: #dee2e6; /* Slightly softer border */
-            --admin-success: #28a745; /* Success green */ --admin-success-dark: #1e7e34;
-            --admin-danger: #dc3545; /* Danger red */ --admin-danger-dark: #c82333;
-            --admin-warning: #ffc107; /* Warning yellow */ --admin-warning-dark: #f0b400;
-            --admin-info: #17a2b8; /* Info blue */ --admin-info-dark: #117a8b;
-            --admin-font: 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif; /* UPDATED FONT STACK */
-            --admin-border-radius: 0.3rem;
-            --admin-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
-            --admin-input-bg: #fff;
+            --primary-color: #007aff; --primary-color-light: #e5f1ff; --bg-color: #f4f6f8; --sidebar-bg: #ffffff;
+            --card-bg: #ffffff; --text-color: #1d1d1f; --text-muted: #6e6e73; --border-color: #e1e4e8;
+            --hover-color: #f8f9fa; --danger-color: #ff3b30; --success-color: #34c759; --warning-color: #ff9500;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: var(--admin-font); background-color: var(--admin-bg-main); color: var(--admin-text-dark); line-height: 1.6; font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-        #adminPanelContainer.hidden { display: none !important; }
-        .container-fluid { display: flex; min-height: 100vh; }
-
-        .sidebar { width: 260px; background-color: var(--admin-bg-sidebar); color: var(--admin-text-light); padding-top: 1.25rem; transition: transform 0.3s ease-in-out; position: fixed; height: 100%; z-index: 1000; transform: translateX(-260px); box-shadow: 0.25rem 0 0.5rem rgba(0,0,0,0.1); overflow-y: auto; }
-        .sidebar.open { transform: translateX(0); }
-        .sidebar .logo { text-align: center; padding-bottom: 1.25rem; font-size: 1.6em; font-weight: 600; color: var(--admin-text-light); border-bottom: 1px solid var(--admin-secondary-light); margin-bottom: 1.25rem; letter-spacing: -0.5px; min-height: 40px; display: flex; align-items: center; justify-content: center;}
-        .sidebar .logo img { max-height: 40px; max-width: 180px; object-fit: contain; }
-        .sidebar nav ul { list-style: none; padding: 0; margin: 0; }
-        .sidebar nav ul li a { display: flex; align-items: center; padding: 0.9rem 1.5rem; color: #adb5bd; text-decoration: none; transition: background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease; font-size: 0.95em; border-left: 4px solid transparent; }
-        .sidebar nav ul li a .icon { margin-right: 0.8rem; width: 20px; text-align: center; font-size: 1.1em; }
-        .sidebar nav ul li a:hover { background-color: var(--admin-secondary-light); color: #fff; border-left-color: var(--admin-primary); }
-        .sidebar nav ul li a.active { background-color: var(--admin-primary); color: #fff; font-weight: 500; border-left-color: #fff; }
-
-        .main-content { flex-grow: 1; padding: 1.5rem; overflow-x: hidden; margin-left: 0; transition: margin-left 0.3s ease-in-out; background-color: var(--admin-bg-main); }
-        .content-header { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--admin-border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .content-header h1 { font-size: 1.75em; color: var(--admin-secondary); margin-bottom: 0; font-weight: 600; }
-        .content-section { display: none; animation: fadeInAdmin 0.35s ease-out; }
-        .content-section.active { display: block; }
-        @keyframes fadeInAdmin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
-        .card { background-color: #fff; border-radius: var(--admin-border-radius); box-shadow: var(--admin-box-shadow); padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid var(--admin-primary); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 0.7rem 1.5rem rgba(0,0,0,0.07); }
-        .card h3 { font-size: 1.05em; color: var(--admin-secondary); margin-bottom: 0.6rem; font-weight: 500; }
-        .card .value { font-size: 1.8em; font-weight: 700; color: var(--admin-primary); margin-top: auto; }
-
-        .table-container { background-color: #fff; border-radius: var(--admin-border-radius); box-shadow: var(--admin-box-shadow); overflow-x: auto; padding: 1.25rem; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 1rem; }
-        th, td { padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid #f1f3f5; vertical-align: middle; font-size:0.92em; }
-        th { background-color: #f8f9fa; color: var(--admin-secondary-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85em;}
-        tr:nth-child(even) { background-color: #fdfdfe; }
-        tr:hover { background-color: #f5f7fa; }
-        .btn-icon { margin-right: 5px; font-size: 0.95em; line-height: 1; }
-        td .action-btn { padding: 0.4rem 0.8rem; margin: 0.1rem; border: none; border-radius: var(--admin-border-radius); cursor: pointer; font-size: 0.85em; display: inline-flex; align-items:center; font-weight:500; transition: opacity 0.2s, transform 0.15s; }
-        td .action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-edit { background-color: var(--admin-success); color: white; } .btn-delete { background-color: var(--admin-danger); color: white; } .btn-view { background-color: var(--admin-info); color: white; } .btn-reset-pass { background-color: var(--admin-warning); color: white; }
-        .product-image-thumbnail { max-width: 45px; max-height: 45px; border-radius: var(--admin-border-radius); object-fit: cover; border: 1px solid var(--admin-border-color); }
-
-        /* Animated Form Container Base */
-        .form-container {
-            background-color: #fff; padding: 1.5rem; border-radius: var(--admin-border-radius);
-            box-shadow: var(--admin-box-shadow); margin-top: 1.5rem;
-            transition: opacity 0.35s ease-out, max-height 0.4s ease-out, transform 0.35s ease-out,
-                        padding-top 0.4s ease-out, padding-bottom 0.4s ease-out,
-                        margin-top 0.4s ease-out, margin-bottom 0.4s ease-out;
-            max-height: 1800px; /* Ample height for any form */
-            overflow: hidden;
-            transform: translateY(0);
+        [data-theme="dark"] {
+            --primary-color: #0a84ff; --primary-color-light: #1c3d5e; --bg-color: #121212; --sidebar-bg: #1e1e1e;
+            --card-bg: #1e1e1e; --text-color: #e0e0e0; --text-muted: #a0a0a0; --border-color: #333333; --hover-color: #2a2a2a;
         }
-        /* Animated Hidden State for .form-container */
-        .form-container.hidden {
-            display: block !important; /* Override global .hidden for animation */
-            opacity: 0;
-            max-height: 0px !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            margin-top: 0 !important;
-            margin-bottom: 0 !important; /* Ensure it collapses fully */
-            border-top-width: 0 !important; /* Collapse borders too if any */
-            border-bottom-width: 0 !important;
-            transform: translateY(-20px);
-            pointer-events: none;
-            visibility: hidden; /* Hide from accessibility tree when collapsed */
-        }
-
-        .form-group { margin-bottom: 1.1rem; }
-        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; color: #495057; font-size:0.9em; }
-        .form-group input[type="text"], .form-group input[type="password"], .form-group input[type="number"], .form-group input[type="email"], .form-group input[type="url"], .form-group input[type="file"], .form-group textarea, .form-group select { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--admin-border-color); border-radius: var(--admin-border-radius); font-size: 0.95em; color: var(--admin-text-dark); transition: border-color 0.2s, box-shadow 0.2s; background-color: var(--admin-input-bg); font-family: var(--admin-font); }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--admin-primary); box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.2); outline:none; background-color: #fff;}
-        .form-group input[type="checkbox"] { width: auto; margin-right: 0.5rem; vertical-align: middle; transform: scale(1.05); accent-color: var(--admin-primary); }
-        .form-group input[type="file"] { padding: 0.3rem; }
-        .form-group textarea { min-height: 100px; resize: vertical;}
-        .btn-primary, .btn-secondary, .btn-danger, .btn-warning, .btn-info { padding: 0.7rem 1.2rem; border: none; border-radius: var(--admin-border-radius); cursor: pointer; font-size: 0.95em; font-weight: 500; margin-top: 0.5rem; transition: all 0.2s ease-out; position: relative; overflow: hidden; font-family: var(--admin-font); display: inline-flex; align-items: center; justify-content: center;}
-        .btn-primary:hover, .btn-secondary:hover, .btn-danger:hover, .btn-warning:hover, .btn-info:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-        .btn-primary:active, .btn-secondary:active, .btn-danger:active, .btn-warning:active, .btn-info:active { transform: translateY(0px); box-shadow: inset 0 2px 3px rgba(0,0,0,0.1); }
-        .btn-primary { background-color: var(--admin-primary); color: white; } .btn-primary:hover { background-color: var(--admin-primary-dark); }
-        .btn-primary:disabled { background-color: #a0c7e8; cursor: not-allowed; transform: none; box-shadow: none;}
-        .btn-secondary { background-color: var(--admin-secondary); color: white; margin-left: 0.5rem; } .btn-secondary:hover { background-color: var(--admin-secondary-light); }
-        .btn-danger { background-color: var(--admin-danger); color: white; margin-left: 0.5rem; } .btn-danger:hover { background-color: var(--admin-danger-dark); }
-
-        .save-feedback { padding: 0.45rem 0.8rem; background-color: var(--admin-success); color: white; border-radius: var(--admin-border-radius); font-size: 0.88em; margin-left: 12px; display: inline-flex; align-items: center; opacity: 0; transform: translateX(-10px) scale(0.9); transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; position: absolute; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .save-feedback svg { width: 14px; height: 14px; margin-right: 5px; }
-        button { position: relative; } /* For absolute positioning of feedback */
-        button .save-feedback {
-             position: absolute; right: -15px; top: 50%; transform: translateY(-50%) translateX(-10px) scale(0.9);
-        }
-        button.btn-lg .save-feedback { right: -20px; } /* Adjust for larger buttons if needed */
-        .save-feedback.show { opacity: 1; transform: translateY(-50%) translateX(0) scale(1); }
-
-
-        /* Animated Payment Method Config Base */
-        .payment-method-config {
-            border: 1px solid #e0e0e0; padding: 1rem; border-radius: var(--admin-border-radius); margin-top:0.8rem; background-color: #fdfdfd;
-            transition: opacity 0.35s ease-out, max-height 0.4s ease-out, transform 0.35s ease-out,
-                        padding-top 0.4s ease-out, padding-bottom 0.4s ease-out,
-                        margin-top 0.4s ease-out;
-            max-height: 600px; /* Ample height */
-            overflow: hidden;
-            transform: translateY(0);
-        }
-        /* Animated Hidden State for .payment-method-config */
-        .payment-method-config.hidden {
-            display: block !important; /* Override global .hidden for animation */
-            opacity: 0;
-            max-height: 0px !important;
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            margin-top: 0 !important;
-            border-top-width: 0 !important;
-            border-bottom-width: 0 !important;
-            transform: translateY(-15px);
-            pointer-events: none;
-            visibility: hidden;
-        }
-
-        .image-preview-container { margin-top: 0.8rem; }
-        .image-preview-container img#adminProductImagePreview, .image-preview-container img#adminCustomizeLogoPreview { max-width: 150px; max-height: 150px; border: 1px solid var(--admin-border-color); border-radius: var(--admin-border-radius); object-fit: contain; }
-
-        /* Animated QR Image Preview Base */
-        .qr-image-preview-admin {
-            width: 120px; height: 120px; object-fit: contain; border: 1px solid var(--admin-border-color);
-            border-radius: var(--admin-border-radius); margin-top: 0.4rem; display: block;
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out, height 0.3s ease-out,
-                        width 0.3s ease-out, margin-top 0.3s ease-out, border-width 0.3s ease-out;
-            opacity: 1; transform: scale(1);
-        }
-        /* Animated Hidden State for .qr-image-preview-admin */
-        .qr-image-preview-admin.hidden {
-            display: block !important; /* Override global .hidden */
-            opacity: 0 !important;
-            transform: scale(0.85) !important;
-            height: 0px !important;
-            width: 0px !important; /* Can also animate width for full collapse */
-            margin-top: 0 !important;
-            border-width: 0 !important;
-            pointer-events: none;
-            visibility: hidden;
-        }
-
-        /* Modal Styling */
-        .modal {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Changed from center to allow scrolling from top */
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.3);
-            z-index: 1500;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-out, visibility 0s linear 0.3s;
-            padding-top: 5%; /* Give some space from top */
-            overflow-y: auto; /* Allow modal itself to scroll if content too long */
-        }
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-            transition-delay: 0s;
-        }
-        .modal-content {
-            background-color: #fff;
-            width: 90%; /* Responsive width */
-            max-width: 620px; /* Max width for larger screens */
-            padding: 2rem; border-radius: var(--admin-border-radius);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transform: translateY(-20px) scale(0.97);
-            transition: transform 0.3s ease-out 0.05s;
-            position: relative;
-            margin-bottom: 5%; /* Space at the bottom */
-        }
-        .modal.active .modal-content {
-            transform: translateY(0) scale(1);
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--admin-border-color); margin-bottom: 1rem;}
-        .modal-header h2 { font-size: 1.5em; font-weight: 600; margin:0; }
-        .close-modal-btn {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #888;
-            cursor: pointer;
-            background: none; border: none; padding: 0 0.5rem; line-height: 1;
-            transition: color 0.2s;
-        }
-        .close-modal-btn:hover { color: #333; }
-        .modal-body {
-             max-height: 70vh; /* Max height for body content */
-             overflow-y: auto; /* Scroll for modal body if its content exceeds max-height */
-             padding-right: 10px; /* Space for scrollbar */
-        }
-        .modal-body img.product-image-large, .modal-body img.screenshot-large { max-width:100%; max-height: 290px; display: block; margin: 0 auto 1rem auto; border: 1px solid var(--admin-border-color); border-radius: var(--admin-border-radius); }
-
-
-        .hamburger { display: none; font-size: 1.8em; color: var(--admin-secondary); cursor: pointer; padding: 0.5rem 0.8rem; background: #fff; border: 1px solid var(--admin-border-color); border-radius: var(--admin-border-radius); position: fixed; top: 1rem; left: 1rem; z-index: 1001; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .login-container { background-color: var(--admin-bg-sidebar); display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100%; position: fixed; top:0; left:0; z-index: 2000;}
-        .login-container.hidden { display: none !important; }
-        .login-form-wrapper { background-color: #fff; padding: 2.8rem 3.2rem; border-radius: var(--admin-border-radius); box-shadow: 0 0.8rem 2.5rem rgba(0,0,0,0.1);}
-        .login-form-wrapper h2 { font-size: 1.9em; text-align: center; margin-bottom: 1.5rem; color: var(--admin-secondary); }
-        .login-error { background-color: #ffebee; color: var(--admin-danger-dark); padding: 0.75rem; border-radius: var(--admin-border-radius); margin-bottom: 1rem; border: 1px solid var(--admin-danger); font-size:0.9em;}
-
-
-        .sub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.3rem; padding-bottom: 0.8rem; border-bottom: 1px solid #eee;}
-        .sub-header h3 { margin:0; font-size: 1.4em; color: var(--admin-secondary); font-weight:600; }
-
-        .color-picker-container { display: flex; gap: 0.7rem; margin-top: 0.4rem; flex-wrap: wrap;}
-        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-        .color-swatch:hover { transform: scale(1.12); }
-        .color-swatch.selected { border-color: var(--admin-secondary); box-shadow: 0 0 0 3px var(--admin-secondary), 0 1px 3px rgba(0,0,0,0.15); }
-        #adminCustomizeThemeColorCustom { width: auto; padding: 0.3rem; height: 34px; margin-left: 0.7rem; border-radius:var(--admin-border-radius); }
-        .ad-slot-info { font-size: 0.9em; color: #6c757d; margin-top: 0.3rem; }
-
-        /* Global hidden utility */
-        .hidden { display: none !important; }
-
-        /* Animated hidden state for adminSupportContactLinkPrefixGroup */
-        #adminSupportContactLinkPrefixGroup {
-            transition: opacity 0.35s ease-out, max-height 0.4s ease-out, transform 0.35s ease-out,
-                        padding-top 0.4s ease-out, padding-bottom 0.4s ease-out, margin-bottom 0.4s ease-out;
-            max-height: 200px; overflow: hidden; transform: translateY(0);
-        }
-        #adminSupportContactLinkPrefixGroup.hidden {
-            display: block !important; opacity: 0; max-height: 0px !important;
-            padding-top: 0 !important; padding-bottom: 0 !important; margin-bottom: 0 !important;
-            transform: translateY(-10px); pointer-events: none; visibility: hidden;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); font-size: 14px; line-height: 1.5; transition: background-color 0.3s, color 0.3s; }
+        #login-container { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
+        .login-box { background: var(--card-bg); padding: 40px; border-radius: 12px; box-shadow: var(--shadow-md); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { font-size: 24px; margin-bottom: 8px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-muted); }
+        .form-input, .form-select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--bg-color); color: var(--text-color); transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-input:focus, .form-select:focus { border-color: var(--primary-color); box-shadow: 0 0 0 3px var(--primary-color-light); outline: none; }
+        .btn { padding: 12px 18px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; opacity: 0.7; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; width: auto; box-shadow: none !important; }
+        .btn-warning { background-color: var(--warning-color); color: white; }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-secondary { background-color: var(--hover-color); color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-auto { width: auto; }
+        #admin-panel { display: none; flex-direction: row; min-height: 100vh; }
+        .sidebar { width: 250px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 15px; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; transition: transform 0.3s ease-in-out; }
+        .sidebar .logo { font-size: 1.6rem; font-weight: 700; color: var(--primary-color); margin-bottom: 30px; text-align: center; padding: 10px 0;}
+        .sidebar-nav ul { list-style: none; padding-left: 0; }
+        .sidebar-nav li a { display: flex; align-items: center; gap: 15px; padding: 12px 15px; color: var(--text-muted); text-decoration: none; border-radius: 8px; margin-bottom: 5px; font-weight: 500; }
+        .sidebar-nav li a:hover { background-color: var(--hover-color); color: var(--text-color); }
+        .sidebar-nav li a.active { background-color: var(--primary-color-light); color: var(--primary-color); font-weight: 600; }
+        #logout-btn { margin-top: auto; }
+        main { padding: 30px; width: 100%; transition: margin-left 0.3s ease-in-out; }
+        @media (min-width: 993px) { main { margin-left: 250px; width: calc(100% - 250px); } .sidebar { transform: translateX(0) !important; } .menu-toggle { display: none; } }
+        @media (max-width: 992px) { .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); } }
+        .main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .menu-toggle { background: none; border: none; font-size: 28px; cursor: pointer; color: var(--text-color); }
+        #theme-toggle { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 999; }
+        .sidebar-overlay.active { display: block; }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .page-header h1 { font-size: 28px; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .table-container { border: 1px solid var(--border-color); border-radius: 12px; overflow-x: auto; background-color: var(--card-bg); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        tbody tr:last-child td { border-bottom: none; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1001; display: none; justify-content: center; align-items: center; padding: 15px; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
+        .modal-container { background: var(--card-bg); padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-footer { margin-top: 25px; display: flex; justify-content: flex-end; gap: 10px; }
+        #toast-notification { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+        .toast { padding: 15px 20px; border-radius: 8px; color: white; font-weight: 500; box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateX(20px); animation: slideInToast 0.5s forwards; margin-bottom: 10px; }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--danger-color); }
+        @keyframes slideInToast { to { opacity: 1; transform: translateX(0); } }
         
-        /* Ad placeholders for admin panel */
-        .admin-ad-placeholder {
-            border:1px dashed #ccc; padding:10px; margin-bottom:15px; text-align:center; 
-            min-height:70px; background:#f9f9f9; display:none; /* Initially hidden, JS controls visibility */
-            overflow: auto; /* In case ad content is large */
-            font-size: 0.9em; color: #555;
-        }
-        
-        /* Enhanced "No Data" Messages */
-        .no-data-message {
-            text-align: center;
-            color: #6c757d; /* Softer than default text */
-            padding: 20px 10px; /* More padding */
-            font-style: italic;
-            background-color: #f0f2f5; /* Slightly different from main bg for emphasis */
-            border: 1px dashed var(--admin-border-color);
-            border-radius: var(--admin-border-radius);
-            margin-top: 1.5rem;
-            font-size: 0.95em;
-        }
-        /* Specific for table cells if needed */
-        td.no-data-cell {
-            background-color: transparent !important; /* Override row hover/even styles */
-            border-bottom: none !important;
-            text-align: center;
-            color: #6c757d;
-            padding: 20px 10px;
-            font-style: italic;
-            font-size: 0.95em;
-        }
-
-
-        .mt-20 { margin-top: 1.25rem; } .mb-20 { margin-bottom: 1.25rem; }
-        .text-center { text-align: center; }
-
-        @media (min-width: 992px) { .sidebar { transform: translateX(0); } .main-content { margin-left: 260px; } }
-        @media (max-width: 991px) { .hamburger { display: block; } .main-content { margin-left: 0; padding-top: 5rem; } }
-        @media (max-width: 768px) { body { font-size: 15px; } .main-content { padding-top: 4.5rem; } .content-header h1 { font-size: 1.6em; } .modal-content { width: 92%; padding:1.5rem; } td .action-btn { padding: 0.5rem 0.6rem; font-size: 0.85em; } th, td { padding: 0.7rem 0.6rem; } .form-container { padding: 1.2rem; } }
-        @media (max-width: 480px) { body { font-size: 14.5px; } .sidebar .logo { font-size: 1.35em; } .sidebar nav ul li a { padding: 0.8rem 1.2rem; font-size: 0.92em; } .main-content { padding: 0.8rem; padding-top: 4.5rem; } .content-header h1 { font-size: 1.4em; } .card { padding: 1rem; } .card h3 { font-size: 1em; } .card .value { font-size: 1.6em; } .table-container { padding: 0.8rem; } th, td { padding: 0.6rem 0.4rem; font-size: 0.88em; } th {font-size: 0.82em;} td .action-btn { width: 100%; margin: 0.15rem 0; } .login-form-wrapper { padding: 1.5rem; margin:0 10px;} .modal-content { padding: 1rem; } }
+        /* NEW STYLES for Order Details */
+        .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .detail-item { background-color: var(--bg-color); padding: 10px 15px; border-radius: 8px; }
+        .detail-item strong { display: block; color: var(--text-muted); font-size: 12px; margin-bottom: 4px; }
+        .detail-item span { font-weight: 500; }
+        #modal-order-items .item { display: flex; align-items: center; gap: 15px; padding: 10px; border-bottom: 1px solid var(--border-color); }
+        #modal-order-items .item:last-child { border-bottom: none; }
+        #modal-order-items img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+        hr.modal-divider { border: none; border-top: 1px solid var(--border-color); margin: 20px 0; }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container"><div class="login-form-wrapper"><h2>Admin Panel Login</h2><form id="loginForm" autocomplete="off"><div id="loginErrorMessage" class="login-error hidden"></div><div class="form-group"><label for="username">Username</label><input type="text" id="username" required autocomplete="off"></div><div class="form-group"><label for="password">Password</label><input type="password" id="password" required autocomplete="new-password"></div><button type="submit" class="btn-primary">Login</button></form></div></div>
 
-    <!-- Main Admin Panel -->
-    <div id="adminPanelContainer" class="container-fluid hidden">
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">Shop Admin Pro</div>
-            <nav><ul>
-                <li><a href="#dashboard" class="nav-link active"><span class="icon">📊</span> Dashboard</a></li>
-                <li><a href="#products" class="nav-link"><span class="icon">📱</span> Products</a></li>
-                <li><a href="#orders" class="nav-link"><span class="icon">🛒</span> Orders</a></li>
-                <li><a href="#categories" class="nav-link"><span class="icon">🏷️</span> Categories</a></li>
-                <li><a href="#posts" class="nav-link"><span class="icon">📝</span> Post Manager</a></li> <!-- NEW POST MANAGER LINK -->
-                <li><a href="#users" class="nav-link"><span class="icon">👥</span> Users</a></li>
-                <li><a href="#customize" class="nav-link"><span class="icon">🎨</span> Customize Site</a></li>
-                <li><a href="#support" class="nav-link"><span class="icon">📞</span> Support Info</a></li>
-                <li><a href="#monetization" class="nav-link"><span class="icon">💰</span> Google Ads & Adsterra</a></li>
-                <li><a href="#settings" class="nav-link"><span class="icon">⚙️</span> Settings</a></li>
-                <li><a href="#" id="btnLogout" class="nav-link"><span class="icon">🚪</span> Logout</a></li>
-            </ul></nav>
+    <div id="login-container">
+        <!-- Login Form (No changes here) -->
+        <div class="login-box">
+            <i class='bx bxl-firebase' style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
+            <h2>Admin Panel Login</h2>
+            <p style="color: var(--text-muted); margin: 10px 0 30px;">Please login to continue.</p>
+            <div class="form-group"><input type="email" id="login-email" class="form-input" placeholder="Email Address" required></div>
+            <div class="form-group"><input type="password" id="login-password" class="form-input" placeholder="Password" required></div>
+            <button id="login-btn" class="btn btn-primary"><span class="btn-text">Login</span><i class='bx bx-loader-alt bx-spin' style="display: none;"></i></button>
+        </div>
+    </div>
+
+    <div id="admin-panel">
+        <!-- Sidebar and Main Content (No changes in structure) -->
+        <aside class="sidebar">
+            <div class="logo">AtoZ Admin</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-view="dashboard-view"><i class='bx bxs-dashboard'></i> Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-view="products-view"><i class='bx bxs-package'></i> Products</a></li>
+                    <li><a href="#" class="nav-link" data-view="orders-view"><i class='bx bxs-cart-alt'></i> Orders</a></li>
+                </ul>
+            </nav>
+            <button id="logout-btn" class="btn btn-danger btn-auto"><i class='bx bx-log-out'></i> Logout</button>
         </aside>
-
-        <main class="main-content" id="mainContent">
-            <div class="hamburger" id="hamburgerMenu">☰</div>
-            <div id="adminHeaderAdPlaceholder" class="admin-ad-placeholder">Header Ad Slot Preview (Not Configured)</div>
-
-            <section id="dashboard" class="content-section active"> <div class="content-header"><h1>Dashboard Overview</h1> <button id="refreshDataBtn" class="btn-primary" style="margin-left:auto;"><span class="btn-icon">🔄</span> Refresh All Data</button></div> <div class="dashboard-cards"> <div class="card"><h3>Total Products</h3><div class="value" id="dashboardTotalProducts">0</div></div> <div class="card"><h3>Total Orders</h3><div class="value" id="dashboardTotalOrders">0</div></div> <div class="card"><h3>Total Sales</h3><div class="value" id="dashboardTotalSales">NPR 0</div></div> <div class="card"><h3>Registered Users</h3><div class="value" id="dashboardTotalUsers">0</div></div> </div> </section>
-            <section id="products" class="content-section"> <div class="content-header"><h1>Product Management</h1><button class="btn-primary" id="btnAddNewProduct"><span class="btn-icon">➕</span>Add New Product</button></div><div class="table-container"><table id="productTableAdmin"><thead><tr><th>Image</th><th>Name</th><th>Brand</th><th>Price</th><th>Stock</th><th>Category</th><th>Actions</th></tr></thead><tbody id="productTableBodyAdmin"></tbody></table> <p id="noProductsMessage" class="no-data-message hidden">No products found. Start by adding some!</p></div><div id="productFormContainer" class="form-container hidden mt-20"><h3 id="productFormTitle">Add New Product</h3><form id="productFormAdmin"><input type="hidden" id="adminProductId"><input type="hidden" id="adminProductImageDataBase64"><div class="form-group"><label for="adminProductNameEn">Product Name</label><input type="text" id="adminProductNameEn" required></div><div class="form-group"><label for="adminProductBrandEn">Brand</label><input type="text" id="adminProductBrandEn" required></div><div class="form-group"><label for="adminProductImageFileEn">Product Image</label><input type="file" id="adminProductImageFileEn" accept="image/*"><div class="image-preview-container"><img id="adminProductImagePreview" src="https://via.placeholder.com/150?text=Preview" alt="Preview"></div></div><div class="form-group"><label for="adminProductDescriptionEn">Product Description</label><textarea id="adminProductDescriptionEn"></textarea></div><div class="form-group"><label for="adminProductPriceEn">Price (NPR)</label><input type="number" id="adminProductPriceEn" required step="0.01" min="0"></div><div class="form-group"><label for="adminProductStockEn">Initial Stock</label><input type="number" id="adminProductStockEn" value="0" required min="0"></div><div class="form-group"><label for="adminProductCategorySelect">Category</label><select id="adminProductCategorySelect"></select></div><button type="submit" class="btn-primary">Save Product <span class="save-feedback" id="productFormFeedback"></span></button><button type="button" class="btn-secondary" id="btnCancelAdminProductForm">Cancel</button></form></div></section>
-            
-            <section id="orders" class="content-section">
-                <div class="content-header">
-                    <h1>Order Management</h1>
-                    <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
-                        <label for="orderStatusFilterAdmin" style="margin-bottom:0; font-weight:normal;">Filter by Status:</label>
-                        <select id="orderStatusFilterAdmin" style="padding: 0.5rem; border-radius: var(--admin-border-radius); border: 1px solid var(--admin-border-color);">
-                            <option value="all">All Orders</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
-                        <button class="btn-primary" id="btnRefreshAdminOrders"><span class="btn-icon">🔄</span>Refresh Orders</button>
-                    </div>
-                </div>
-                <div class="table-container mt-20">
-                    <table id="orderTableAdmin">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>User ID</th>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Trx ID</th>
-                                <th>Status</th>
-                                <th>Verified</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orderTableBodyAdmin"></tbody>
-                    </table>
-                     <p id="noOrdersMessageAdmin" class="no-data-message hidden">No orders found for the selected filter.</p>
+        <div class="sidebar-overlay"></div>
+        <main>
+            <header class="main-header">
+                <button id="menu-toggle" class="menu-toggle"><i class='bx bx-menu'></i></button>
+                <button id="theme-toggle" title="Toggle Theme"><i class='bx bx-sun'></i></button>
+            </header>
+            <section id="dashboard-view" class="view active">
+                <div class="page-header"><h1>Dashboard</h1></div>
+                <div class="stats-grid">
+                    <div class="card"><h3><span id="total-products">0</span></h3><p>Total Products</p></div>
+                    <div class="card"><h3><span id="total-orders">0</span></h3><p>Total Orders</p></div>
+                    <div class="card"><h3>₹ <span id="total-revenue">0</span></h3><p>Total Revenue</p></div>
                 </div>
             </section>
-
-            <section id="categories" class="content-section"> <div class="content-header"><h1>Category Management</h1><button class="btn-primary" id="btnAddNewCategory"><span class="btn-icon">➕</span>Add New Category</button></div><div id="categoryFormContainer" class="form-container hidden mt-20"><h3 id="categoryFormTitle">Add New Category</h3><form id="categoryFormAdmin"><input type="hidden" id="adminCategoryId"><div class="form-group"><label for="adminCategoryNameEn">Category Name</label><input type="text" id="adminCategoryNameEn" required></div><button type="submit" class="btn-primary">Save Category <span class="save-feedback" id="categoryFormFeedback"></span></button><button type="button" class="btn-secondary" id="btnCancelAdminCategoryForm">Cancel</button></form></div><div class="table-container mt-20"><table id="categoryTableAdmin"><thead><tr><th>Name</th><th>Products</th><th>Actions</th></tr></thead><tbody id="categoryTableBodyAdmin"></tbody></table> <p id="noCategoriesMessageAdmin" class="no-data-message hidden">No categories defined yet.</p></div></section>
-            
-            <!-- NEW POST MANAGER SECTION -->
-            <section id="posts" class="content-section">
-                <div class="content-header">
-                    <h1>Post Manager (Max 10 Posts)</h1>
-                    <button class="btn-primary" id="btnAddNewManagedPost"><span class="btn-icon">➕</span>Add New Post</button>
-                </div>
-                <div id="managedPostFormContainer" class="form-container hidden mt-20">
-                    <h3 id="managedPostFormTitle">Add New Post</h3>
-                    <form id="managedPostFormAdmin">
-                        <input type="hidden" id="adminManagedPostId">
-                        <div class="form-group">
-                            <label for="adminManagedPostTitle">Post Title</label>
-                            <input type="text" id="adminManagedPostTitle" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminManagedPostContent">Post Content / Description</label>
-                            <textarea id="adminManagedPostContent" rows="5" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminManagedPostLink">Link (Optional, e.g., YouTube Community Post URL)</label>
-                            <input type="url" id="adminManagedPostLink" placeholder="https://www.youtube.com/post/...">
-                             <small>You can paste any valid URL here, including YouTube video, short, live, or community post links.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminManagedPostType">Post Type</label>
-                            <select id="adminManagedPostType">
-                                <option value="General">General Announcement</option>
-                                <option value="Promotion">Promotion / Offer</option>
-                                <option value="YouTubeCommunity">YouTube Community</option>
-                                <option value="Update">Site Update</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn-primary">Save Post <span class="save-feedback" id="managedPostFormFeedback"></span></button>
-                        <button type="button" class="btn-secondary" id="btnCancelAdminManagedPostForm">Cancel</button>
-                    </form>
-                </div>
-                <div class="table-container mt-20">
-                    <table id="managedPostTableAdmin">
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Type</th>
-                                <th>Link</th>
-                                <th>Date Added</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="managedPostTableBodyAdmin"></tbody>
-                    </table>
-                    <p id="noManagedPostsMessage" class="no-data-message hidden">No posts created yet. Click "Add New Post" to start.</p>
-                </div>
+            <section id="products-view" class="view">
+                <div class="page-header"><h1>Products</h1><button id="add-product-btn" class="btn btn-primary btn-auto"><i class='bx bx-plus'></i>Add New Product</button></div>
+                <div class="table-container"><table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Actions</th></tr></thead><tbody id="products-table-body"></tbody></table></div>
             </section>
-
-            <section id="users" class="content-section"><div class="content-header"><h1>User Management</h1></div><div class="table-container"><table id="userTableAdmin"><thead><tr><th>User ID</th><th>Username</th><th>Email</th><th>Orders</th><th>Actions</th></tr></thead><tbody id="userTableBodyAdmin"></tbody></table></div> <p id="noUsersMessage" class="no-data-message hidden">No users registered on the shop yet.</p></section>
-            <section id="customize" class="content-section"><div class="content-header"><h1>Website Visuals & Content</h1></div><form id="websiteCustomizationForm"><div class="form-container mb-20"><h3>Site Identity & Theme</h3><div class="form-group"><label for="adminCustomizeWebsiteName">Website Name / Logo Text</label><input type="text" id="adminCustomizeWebsiteName"></div><div class="form-group"><label for="adminCustomizeLogoFile">Upload Logo Image (Overrides text in sidebar)</label><input type="file" id="adminCustomizeLogoFile" accept="image/*"><input type="hidden" id="adminCustomizeLogoBase64"><div class="image-preview-container"><img id="adminCustomizeLogoPreview" src="https://via.placeholder.com/150?text=Logo Preview" alt="Logo Preview"></div></div><div class="form-group"><label for="adminCustomizeThemeColor">Primary Theme Color</label><div class="color-picker-container" id="adminThemeColorPicker"></div><input type="color" id="adminCustomizeThemeColorCustom" title="Custom color"><input type="hidden" id="adminCustomizeThemeColor"></div></div><div class="form-container mb-20"><h3>Promotional Content</h3><div class="form-group"><label for="adminCustomizePromoYoutubeUrl">Homepage YouTube Video URL (Optional)</label><input type="url" id="adminCustomizePromoYoutubeUrl" placeholder="e.g., https://www.youtube.com/watch?v=..."><small>Paste the full YouTube watch URL (or other valid YouTube video/short/live URL). This video might be embedded on the shop homepage.</small></div></div><div class="form-container mb-20"><h3>Footer Customization</h3><div class="form-group"><label for="adminCustomizeFooterText">Footer Copyright Text</label><input type="text" id="adminCustomizeFooterText" placeholder="e.g., Your Shop Name. All rights reserved."></div></div><button type="submit" class="btn-primary btn-lg" style="padding: 12px 25px; font-size:1.1em;">Save Visuals & Content <span class="save-feedback" id="customizeFormFeedback"></span></button></form></section>
-            <section id="support" class="content-section"><div class="content-header"><h1>Support Information Management</h1></div><div class="form-container"><div class="sub-header"><h3>Manage Support Contacts</h3><button type="button" class="btn-info" id="btnAdminAddNewSupportContact"><span class="btn-icon">➕</span>Add New Support Contact</button></div><div id="adminSupportContactFormContainer" class="form-container hidden mt-20"><h4 id="adminSupportContactFormTitle" style="margin-bottom:15px;">Add New Support Contact</h4><form id="adminSupportContactForm"><input type="hidden" id="adminSupportContactId"><div class="form-group"><label for="adminSupportContactDisplayText">Display Text (e.g., Phone:, Email Support:)</label><input type="text" id="adminSupportContactDisplayText" required></div><div class="form-group"><label for="adminSupportContactValue">Contact Value (e.g., 98XXXXXXXX, help@example.com)</label><input type="text" id="adminSupportContactValue" required></div><div class="form-group"><label for="adminSupportContactIsLink">Make it a clickable link?</label><input type="checkbox" id="adminSupportContactIsLink" style="vertical-align: middle;"></div><div class="form-group hidden" id="adminSupportContactLinkPrefixGroup"><label for="adminSupportContactLinkPrefix">Link Prefix (e.g., tel:, mailto:, https://)</label><input type="text" id="adminSupportContactLinkPrefix" placeholder="tel: or mailto: or full https:// link"><small>Use "tel:", "mailto:", or full URL. If Contact Value is already a full URL (e.g., https://wa.me/...), prefix can be left blank.</small></div><button type="submit" class="btn-primary">Save Contact <span class="save-feedback" id="supportContactFormFeedback"></span></button><button type="button" class="btn-secondary" id="btnAdminCancelSupportContactForm">Cancel</button></form></div><div class="table-container mt-20"><table id="adminSupportContactTable"><thead><tr><th>Display Text</th><th>Contact Value</th><th>Is Link?</th><th>Actions</th></tr></thead><tbody id="adminSupportContactTableBody"></tbody></table></div><p id="adminNoSupportContactsMessage" class="no-data-message hidden">No support contacts added yet.</p></div></section>
-            <section id="monetization" class="content-section">
-                <div class="content-header"><h1>Monetization (Google Ads & Adsterra)</h1></div>
-                <form id="monetizationSettingsForm">
-                    <div class="form-container">
-                        <p style="font-size:0.9em; color:var(--admin-danger); margin-bottom:15px;"><strong>Warning:</strong> Pasting ad scripts (e.g., from Google AdSense, AdMob, Adsterra) can impact site performance and security. Ensure you use official ad codes from trusted networks. Ad blockers in your browser might prevent seeing the pasted ads.</p>
-                        <div class="form-group">
-                            <input type="checkbox" id="enableHeaderAdSlot">
-                            <label for="enableHeaderAdSlot">Enable Header Ad Slot</label>
-                        </div>
-                        <div class="form-group">
-                            <label for="headerAdSlotContent">Header Ad Slot HTML/Script</label>
-                            <textarea id="headerAdSlotContent" rows="4" placeholder="Paste Google AdSense, AdMob, or Adsterra code for header."></textarea>
-                            <small class="ad-slot-info">Injects into a placeholder at the top of the admin content area. Actual display depends on the ad code and ad blockers.</small>
-                        </div>
-                        <hr style="margin: 20px 0;">
-                        <div class="form-group">
-                            <input type="checkbox" id="enableFooterAdSlot">
-                            <label for="enableFooterAdSlot">Enable Footer Ad Slot</label>
-                        </div>
-                        <div class="form-group">
-                            <label for="footerAdSlotContent">Footer Ad Slot HTML/Script</label>
-                            <textarea id="footerAdSlotContent" rows="4" placeholder="Paste Google AdSense, AdMob, or Adsterra code for footer."></textarea>
-                            <small class="ad-slot-info">Injects into a placeholder at the bottom of the admin content area. Actual display depends on the ad code and ad blockers.</small>
-                        </div>
-                        <hr style="margin: 20px 0;">
-                        <div class="form-group">
-                            <input type="checkbox" id="enableProductListAdSlot" disabled>
-                            <label for="enableProductListAdSlot">Enable In-Product-List Ad Slot (Functionality N/A in panel)</label>
-                        </div>
-                        <div class="form-group">
-                            <label for="productListAdSlotContent">Product List Ad Slot HTML/Script</label>
-                            <textarea id="productListAdSlotContent" rows="4" placeholder="Ad code for product listings (e.g., native ads)." disabled></textarea>
-                            <small class="ad-slot-info">Configuration saved for external use. Visual preview for this slot is not available in this admin panel.</small>
-                        </div>
-                        <button type="submit" class="btn-primary">Save Monetization Settings <span class="save-feedback" id="monetizationFormFeedback"></span></button>
-                    </div>
-                </form>
+            <section id="orders-view" class="view">
+                 <div class="page-header"><h1>Orders</h1></div>
+                 <!-- MODIFIED: Added 'Actions' column to the orders table -->
+                 <div class="table-container"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="orders-table-body"></tbody></table></div>
             </section>
-            <section id="settings" class="content-section"> <div class="content-header"><h1>Settings</h1></div><div class="form-container mb-20"><h3>Store Information (Internal)</h3><form id="storeInfoForm"><div class="form-group"><label for="storeNameSet">Admin Panel Store Name (Internal Reference)</label><input type="text" id="storeNameSet" value="My Mobile Shop Nepal"></div><div class="form-group"><label for="storeCurrencySet">Currency Symbol for Admin</label><select id="storeCurrencySet"><option value="NPR" selected>NPR (रू)</option><option value="INR">INR (₹)</option></select></div><button type="submit" class="btn-primary">Save Store Info <span class="save-feedback" id="storeInfoFormFeedback"></span></button></form></div><div class="form-container mb-20"><h3>Admin Credentials</h3><form id="changeCredentialsForm"><div class="form-group"><label for="currentAdminUsername">Current Username</label><input type="text" id="currentAdminUsername" required autocomplete="username"></div><div class="form-group"><label for="newAdminUsername">New Username (leave blank to keep current)</label><input type="text" id="newAdminUsername" autocomplete="username"></div> <hr style="margin: 20px 0;"><div class="form-group"><label for="currentAdminPassword">Current Password (required to change anything)</label><input type="password" id="currentAdminPassword" required autocomplete="current-password"></div><div class="form-group"><label for="newAdminPassword">New Password (leave blank to keep current)</label><input type="password" id="newAdminPassword" autocomplete="new-password"></div><div class="form-group"><label for="confirmNewAdminPassword">Confirm New Password</label><input type="password" id="confirmNewAdminPassword" autocomplete="new-password"></div><button type="submit" class="btn-primary">Update Credentials <span class="save-feedback" id="changeCredentialsFormFeedback"></span></button></form></div><div class="form-container"><h3>Payment Methods</h3><form id="paymentMethodsForm"><div class="form-group"><input type="checkbox" id="enableCOD" checked><label for="enableCOD"> COD</label></div><div class="form-group"><input type="checkbox" id="enableEsewa"><label for="enableEsewa"> eSewa</label><input type="hidden" id="esewaQrBase64"><div id="esewaConfig" class="payment-method-config hidden"><div class="form-group"><label for="esewaMerchantCode">eSewa Merchant Code</label><input type="text" id="esewaMerchantCode"></div><div class="form-group"><label for="esewaQrUpload">eSewa QR</label><input type="file" id="esewaQrUpload" accept="image/*"><img src="https://via.placeholder.com/120?text=QR" id="esewaQrPreview" class="qr-image-preview-admin hidden"></div></div></div><div class="form-group"><input type="checkbox" id="enableKhalti"><label for="enableKhalti"> Khalti</label><input type="hidden" id="khaltiQrBase64"><div id="khaltiConfig" class="payment-method-config hidden"><div class="form-group"><label for="khaltiPublicKey">Khalti Merchant ID</label><input type="text" id="khaltiPublicKey"></div><div class="form-group"><label for="khaltiQrUpload">Khalti QR</label><input type="file" id="khaltiQrUpload" accept="image/*"><img src="https://via.placeholder.com/120?text=QR" id="khaltiQrPreview" class="qr-image-preview-admin hidden"></div></div></div><div class="form-group"><input type="checkbox" id="enableBankTransfer"><label for="enableBankTransfer"> Bank Transfer</label><input type="hidden" id="bankQrBase64"><div id="bankConfig" class="payment-method-config hidden"><div class="form-group"><label for="bankName">Bank Name</label><input type="text" id="bankName"></div><div class="form-group"><label for="bankAccountName">Account Holder</label><input type="text" id="bankAccountName"></div><div class="form-group"><label for="bankAccountNumber">Account No.</label><input type="text" id="bankAccountNumber"></div><div class="form-group"><label for="bankQrUpload">Bank QR</label><input type="file" id="bankQrUpload" accept="image/*"><img src="https://via.placeholder.com/120?text=QR" id="bankQrPreview" class="qr-image-preview-admin hidden"></div><div class="form-group"><label for="bankInstructions">Instructions</label><textarea id="bankInstructions"></textarea></div></div></div><button type="submit" class="btn-primary">Save Payment Settings <span class="save-feedback" id="paymentMethodsFormFeedback"></span></button></form></div></section>
-            
-            <div id="adminFooterAdPlaceholder" class="admin-ad-placeholder" style="margin-top:20px;">Footer Ad Slot Preview (Not Configured)</div>
         </main>
     </div>
 
-    <!-- Modals -->
-    <div id="orderDetailsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalOrderDetailsTitle">Order Details</h2>
-                <button type="button" class="close-modal-btn" id="closeOrderModalBtn" aria-label="Close">×</button>
+    <!-- Product Modal (No changes here) -->
+    <div id="product-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header"><h3 id="product-modal-title">Add Product</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group"><label for="product-name">Product Name</label><input type="text" id="product-name" class="form-input" required></div>
+                <div class="form-group"><label for="product-price">Price (₹)</label><input type="number" id="product-price" class="form-input" required></div>
+                <div class="form-group"><label for="product-image-url">Image URL</label><input type="text" id="product-image-url" class="form-input" placeholder="e.g., https://i.imgur.com/..." required></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary modal-close" type="button">Cancel</button>
+                    <button id="save-product-btn" type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- NEW: Order Details Modal -->
+    <div id="order-details-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header"><h3 id="order-modal-title">Order Details</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div>
+            
+            <div class="details-grid">
+                <div class="detail-item"><strong>Order ID</strong> <span id="modal-order-id"></span></div>
+                <div class="detail-item"><strong>Order Date</strong> <span id="modal-order-date"></span></div>
+                <div class="detail-item"><strong>Customer Name</strong> <span id="modal-customer-name"></span></div>
+                <div class="detail-item"><strong>Customer Phone</strong> <span id="modal-customer-phone"></span></div>
+                <div class="detail-item" style="grid-column: 1 / -1;"><strong>Shipping Address</strong> <span id="modal-customer-address"></span></div>
+                <div class="detail-item"><strong>Payment Method</strong> <span id="modal-payment-method"></span></div>
+                <div class="detail-item"><strong>Transaction ID</strong> <span id="modal-transaction-id"></span></div>
+                <div class="detail-item" style="background-color: var(--primary-color-light);"><strong>Total Amount</strong> <span id="modal-total-amount" style="color: var(--primary-color); font-weight: 700;"></span></div>
             </div>
-            <div class="modal-body">
-                <p><strong>Order ID:</strong> <span id="modalOrderIdInBody">N/A</span></p>
-                <p><strong>Customer Name:</strong> <span id="modalCustomerName">N/A</span></p>
-                <p><strong>User Details:</strong> <small id="modalOrderUserIdentifier" style="color: #555; font-style: italic;">(User details N/A)</small></p>
-                <p><strong>Email:</strong> <span id="modalCustomerEmail">N/A</span></p>
-                <p><strong>Mobile:</strong> <span id="modalCustomerMobile">N/A</span></p> <!-- Mobile number will show 'Not provided' if data missing -->
-                <p><strong>Shipping Address:</strong> <span id="modalCustomerAddress">N/A</span></p>
-                <hr style="margin: 0.8rem 0;">
-                <p><strong>Date:</strong> <span id="modalOrderDate">N/A</span></p>
-                <p><strong>Amount:</strong> <span id="modalOrderAmount">NPR 0</span></p>
-                <p><strong>Items:</strong> <ul id="modalOrderItemsList" style="list-style-type: disc; margin-left: 20px;"></ul></p>
-                <p><strong>Payment Verified:</strong> <span id="modalPaymentVerified">No</span></p>
-                <p><strong>Current Status:</strong> <span id="modalCurrentStatus">N/A</span></p>
-                <div class="form-group">
-                    <label for="modalOrderStatusSelect">Change Status:</label>
-                    <select id="modalOrderStatusSelect">
-                        <option>Pending</option><option>Processing</option><option>Shipped</option><option>Completed</option><option>Cancelled</option><option>Rejected</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <p><strong>Screenshot:</strong> (Note: URL must be valid in order data)</p>
-                    <img src="https://via.placeholder.com/400x300?text=No+Screenshot" id="modalOrderScreenshot" class="screenshot-large">
-                </div>
-                <input type="hidden" id="modalEditingOrderId">
+
+            <hr class="modal-divider">
+
+            <h4>Ordered Items</h4>
+            <div id="modal-order-items" style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+            
+            <hr class="modal-divider">
+
+            <div class="form-group">
+                <label for="modal-order-status-select"><strong>Update Order Status</strong></label>
+                <select id="modal-order-status-select" class="form-select">
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close" type="button">Close</button>
+                <button id="save-order-status-btn" type="button" class="btn btn-primary">Save Status</button>
             </div>
         </div>
     </div>
-    <div id="productDetailsModalAdmin" class="modal"><div class="modal-content"><div class="modal-header"><h2 id="modalProductNameAdmin">Product Details</h2><button type="button" class="close-modal-btn" id="closeProductDetailsModalAdminBtn" aria-label="Close">×</button></div><div class="modal-body"><img src="https://via.placeholder.com/300?text=Product+Image" id="modalProductImageAdmin" class="product-image-large" alt="Product Image"><p><strong>Brand:</strong> <span id="modalProductBrandAdmin">N/A</span></p><p><strong>Price:</strong> <span id="modalProductPriceAdmin">NPR 0</span></p><p><strong>Stock:</strong> <span id="modalProductStockAdmin">0</span></p><p><strong>Category:</strong> <span id="modalProductCategoryAdmin">N/A</span></p><p><strong>Description:</strong></p><div id="modalProductDescriptionAdmin" class="product-description-modal">N/A</div></div></div></div>
 
-    <script>
-    // --- Admin Panel JavaScript (Full & Enchanted, with fixes and new Post Manager) ---
-    document.addEventListener('DOMContentLoaded', function() {
-        const LS_ADMIN_USERNAME_KEY = 'adminProSimUsername_v1';
-        const LS_ADMIN_PASSWORD_KEY = 'adminProSimPassword_v1';
-        let simUsername = localStorage.getItem(LS_ADMIN_USERNAME_KEY) || 'admin';
-        let simPassword = localStorage.getItem(LS_ADMIN_PASSWORD_KEY) || 'password123';
-        let isLoggedIn = false;
-        let currentCurrency = 'NPR';
-        let currentTotalSales = 0;
+    <div id="toast-notification"></div>
 
-        const LS_ADMIN_PRODUCTS_KEY = 'adminManagedProducts_v6';
-        const LS_ADMIN_CATEGORIES_KEY = 'adminPanelCategories_v5'; 
-        const LS_SHOP_ORDERS_KEY = 'shopOrders_v8'; 
-        const LS_ADMIN_PAYMENT_SETTINGS_KEY = 'adminPaymentSettings_v6';
-        const LS_SHOP_CUSTOMIZATION_KEY = 'shopCustomization_v7';
-        const LS_SHOP_USERS_KEY = 'shopUsers_v6';
-        const LS_ADMIN_POSTS_KEY = 'adminManagedPosts_v1'; // For new Post Manager
-        const MAX_POSTS = 10; // Max limit for posts
+    <script type="module">
+        // Firebase Config and Imports (No Changes)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBJVsgK-5lfNORLjPDf1k98z-DfzVy-BkQ",
+            authDomain: "r-commerce-31882.firebaseapp.com",
+            databaseURL: "https://r-commerce-31882-default-rtdb.firebaseio.com",
+            projectId: "r-commerce-31882",
+            storageBucket: "r-commerce-31882.appspot.com",
+            messagingSenderId: "933291900578",
+            appId: "1:933291900578:web:73abc587657ef9a495a1fb",
+            measurementId: "G-HQ61F0YPLH"
+        };
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
+        import { getDatabase, ref, onValue, set, push, remove, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const ADMIN_UIDS = ['IchlEMXcd6QOhOxcyusqlYSqMh42', '0i05Vq5GqycBjZ9ROlhpJUhyY7i2'];
 
-        const getEl = id => document.getElementById(id);
-        const querySelAll = sel => document.querySelectorAll(sel);
+        // Helper Functions (No Changes)
+        const loginContainer = document.getElementById('login-container');
+        const adminPanel = document.getElementById('admin-panel');
+        const showToast = (message, type = 'success') => {
+            const container = document.getElementById('toast-notification');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class='bx ${type === 'success' ? 'bxs-check-circle' : 'bxs-x-circle'}'></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove() }, 4000);
+        };
+        const showEmpty = (tbody, colspan, message) => { tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center; padding: 40px;">${message}</td></tr>`; };
 
-        const loginScreen = getEl('loginScreen'); const adminPanelContainer = getEl('adminPanelContainer'); const loginForm = getEl('loginForm'); const loginErrorMessage = getEl('loginErrorMessage'); const btnLogout = getEl('btnLogout'); const navLinks = querySelAll('.sidebar .nav-link'); const contentSections = querySelAll('.main-content .content-section'); const sidebar = getEl('sidebar'); const hamburgerMenu = getEl('hamburgerMenu'); const mainContent = getEl('mainContent'); const sidebarLogoDiv = sidebar.querySelector('.logo');
-        const dashboardTotalProductsEl = getEl('dashboardTotalProducts'); const dashboardTotalOrdersEl = getEl('dashboardTotalOrders'); const dashboardTotalSalesEl = getEl('dashboardTotalSales'); const dashboardTotalUsersEl = getEl('dashboardTotalUsers'); const refreshDataBtn = getEl('refreshDataBtn');
-        
-        const btnAddNewProduct = getEl('btnAddNewProduct'); const productFormContainer = getEl('productFormContainer'); const productFormAdmin = getEl('productFormAdmin'); const productFormTitle = getEl('productFormTitle'); const productTableBodyAdmin = getEl('productTableBodyAdmin'); const btnCancelAdminProductForm = getEl('btnCancelAdminProductForm'); const adminProductImageFileEn = getEl('adminProductImageFileEn'); const adminProductImagePreview = getEl('adminProductImagePreview'); const adminProductImageDataBase64Input = getEl('adminProductImageDataBase64'); const adminProductCategorySelect = getEl('adminProductCategorySelect'); const adminProductDescriptionEn = getEl('adminProductDescriptionEn'); const productDetailsModalAdmin = getEl('productDetailsModalAdmin'); const closeProductDetailsModalAdminBtn = getEl('closeProductDetailsModalAdminBtn');
-        const noProductsMessage = getEl('noProductsMessage');
-        
-        const orderTableBodyAdmin = getEl('orderTableBodyAdmin'); const orderDetailsModal = getEl('orderDetailsModal'); const closeOrderModalBtn = getEl('closeOrderModalBtn'); const modalOrderStatusSelect = getEl('modalOrderStatusSelect'); const modalOrderItemsList = getEl('modalOrderItemsList'); const modalEditingOrderIdInput = getEl('modalEditingOrderId'); const btnRefreshAdminOrders = getEl('btnRefreshAdminOrders');
-        const orderStatusFilterAdmin = getEl('orderStatusFilterAdmin');
-        const noOrdersMessageAdmin = getEl('noOrdersMessageAdmin');
-        
-        const btnAddNewCategory = getEl('btnAddNewCategory'); const categoryFormContainer = getEl('categoryFormContainer'); const categoryFormAdmin = getEl('categoryFormAdmin'); const categoryFormTitle = getEl('categoryFormTitle'); const categoryTableBodyAdmin = getEl('categoryTableBodyAdmin'); const btnCancelAdminCategoryForm = getEl('btnCancelAdminCategoryForm');
-        const noCategoriesMessageAdmin = getEl('noCategoriesMessageAdmin');
-        
-        // Post Manager Elements
-        const btnAddNewManagedPost = getEl('btnAddNewManagedPost');
-        const managedPostFormContainer = getEl('managedPostFormContainer');
-        const managedPostFormAdmin = getEl('managedPostFormAdmin');
-        const managedPostFormTitle = getEl('managedPostFormTitle');
-        const managedPostTableBodyAdmin = getEl('managedPostTableBodyAdmin');
-        const btnCancelAdminManagedPostForm = getEl('btnCancelAdminManagedPostForm');
-        const noManagedPostsMessage = getEl('noManagedPostsMessage');
-
-        const userTableBodyAdmin = getEl('userTableBodyAdmin'); const noUsersMessage = getEl('noUsersMessage');
-        
-        const websiteCustomizationForm = getEl('websiteCustomizationForm'); const adminCustomizeWebsiteNameInput = getEl('adminCustomizeWebsiteName'); const adminCustomizeLogoFile = getEl('adminCustomizeLogoFile'); const adminCustomizeLogoBase64 = getEl('adminCustomizeLogoBase64'); const adminCustomizeLogoPreview = getEl('adminCustomizeLogoPreview'); const adminThemeColorPicker = getEl('adminThemeColorPicker'); const adminCustomizeThemeColorCustom = getEl('adminCustomizeThemeColorCustom'); const adminCustomizeThemeColor = getEl('adminCustomizeThemeColor'); const adminCustomizePromoYoutubeUrl = getEl('adminCustomizePromoYoutubeUrl'); const adminCustomizeFooterText = getEl('adminCustomizeFooterText');
-        
-        const btnAdminAddNewSupportContact = getEl('btnAdminAddNewSupportContact'); const adminSupportContactFormContainer = getEl('adminSupportContactFormContainer'); const adminSupportContactFormAdmin = getEl('adminSupportContactForm'); const adminSupportContactFormTitle = getEl('adminSupportContactFormTitle'); const adminSupportContactTableBody = getEl('adminSupportContactTableBody'); const btnAdminCancelSupportContactForm = getEl('btnAdminCancelSupportContactForm'); const adminSupportContactIsLinkCheckbox = getEl('adminSupportContactIsLink'); const adminSupportContactLinkPrefixGroup = getEl('adminSupportContactLinkPrefixGroup'); const adminNoSupportContactsMessage = getEl('adminNoSupportContactsMessage');
-        
-        const monetizationSettingsForm = getEl('monetizationSettingsForm');
-        const adminHeaderAdPlaceholder = getEl('adminHeaderAdPlaceholder');
-        const adminFooterAdPlaceholder = getEl('adminFooterAdPlaceholder');
-
-        const storeInfoForm = getEl('storeInfoForm'); const changeCredentialsForm = getEl('changeCredentialsForm'); const storeCurrencySet = getEl('storeCurrencySet'); const paymentMethodsForm = getEl('paymentMethodsForm');
-
-        let adminProductsArray = []; let adminCategoriesArray = []; let adminPostsArray = []; // For new Post Manager
-        let shopCustomization = { websiteName: "My Shop", supportContacts: [], themeColor: "#007bff", logoBase64: "", promoYoutubeUrl: "", footerText: "My Shop. All rights reserved.", adSlots: { header: { enabled: false, content: "" }, footer: { enabled: false, content: "" }, productList: { enabled: false, content: ""} } };
-        let shopUsersArray = []; 
-
-        function attemptAutoLogin() { if (sessionStorage.getItem('adminSessionActive') === 'true') { isLoggedIn = true; loginScreen.classList.add('hidden'); adminPanelContainer.classList.remove('hidden'); initializeAdminPanelData(); showSection(window.location.hash || '#dashboard'); } else { loginScreen.classList.remove('hidden'); adminPanelContainer.classList.add('hidden'); } }
-        if (loginForm) { loginForm.addEventListener('submit', (e) => { e.preventDefault(); const u = getEl('username').value, p = getEl('password').value; if (u === simUsername && p === simPassword) { isLoggedIn = true; sessionStorage.setItem('adminSessionActive', 'true'); loginScreen.classList.add('hidden'); adminPanelContainer.classList.remove('hidden'); loginErrorMessage.classList.add('hidden'); initializeAdminPanelData(); const activeLink = document.querySelector('.sidebar .nav-link.active'); if (activeLink) showSection(activeLink.getAttribute('href')); else showSection('#dashboard'); } else { loginErrorMessage.textContent = "Invalid credentials."; loginErrorMessage.classList.remove('hidden'); } }); }
-        if (btnLogout) { btnLogout.addEventListener('click', (e) => { e.preventDefault(); isLoggedIn = false; sessionStorage.removeItem('adminSessionActive'); adminPanelContainer.classList.add('hidden'); loginScreen.classList.remove('hidden'); loginForm.reset(); contentSections.forEach(s => s.classList.remove('active')); navLinks.forEach(n => n.classList.remove('active')); getEl('sidebar').querySelector('.nav-link[href="#dashboard"]').classList.add('active'); if(sidebar.classList.contains('open')) sidebar.classList.remove('open'); alert("Logged out."); }); }
-        
-        function showSection(targetId) {
-            if (!isLoggedIn && targetId !== '#loginScreen') {
-                if (loginScreen && !loginScreen.classList.contains('hidden')) return; 
-                adminPanelContainer.classList.add('hidden');
-                loginScreen.classList.remove('hidden');
+        // Render Orders Function - MODIFIED
+        const renderOrders = (data) => {
+            const tbody = document.getElementById('orders-table-body');
+            if (!data) {
+                showEmpty(tbody, 6, "No orders have been placed yet.");
                 return;
             }
-            contentSections.forEach(s => s.classList.toggle('active', s.id === targetId.substring(1)));
-            [productFormContainer, categoryFormContainer, adminSupportContactFormContainer, managedPostFormContainer].forEach(el => {if(el) el.classList.add('hidden');}); // Added managedPostFormContainer
-            [orderDetailsModal, productDetailsModalAdmin].forEach(m => {if(m) m.classList.remove('active');});
+            const ordersArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+            tbody.innerHTML = ordersArray.map(o => `
+                <tr>
+                    <td>#${o.id.slice(-6).toUpperCase()}</td>
+                    <td>${o.shippingInfo?.name || 'N/A'}</td>
+                    <td>₹${Number(o.totalAmount || 0).toLocaleString('en-IN')}</td>
+                    <td><span class="status-${(o.status || 'pending').toLowerCase()}">${o.status || 'Pending'}</span></td>
+                    <td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary view-order-details-btn" data-id="${o.id}">Details</button>
+                    </td>
+                </tr>`).join('');
+        };
 
-            if (targetId === '#products') renderAdminProductTable();
-            else if (targetId === '#orders') loadAndDisplayShopOrders(); 
-            else if (targetId === '#settings') loadPaymentSettings(); 
-            else if (targetId === '#customize') loadShopCustomizationSettings();
-            else if (targetId === '#users') renderUserTable();
-            else if (targetId === '#monetization') loadMonetizationSettings();
-            else if (targetId === '#support') renderAdminSupportContactTable();
-            else if (targetId === '#categories') renderAdminCategoryTable();
-            else if (targetId === '#posts') renderManagedPostTable(); // For new Post Manager
-        }
-        navLinks.forEach(link => { if (link.id === 'btnLogout') return; link.addEventListener('click', function(e) { e.preventDefault(); if (!isLoggedIn) { showSection('#loginScreen'); return; } const targetId = this.getAttribute('href'); navLinks.forEach(nav => nav.classList.remove('active')); this.classList.add('active'); showSection(targetId); if (window.innerWidth <= 991 && sidebar.classList.contains('open')) sidebar.classList.remove('open'); }); });
-        if(hamburgerMenu) hamburgerMenu.addEventListener('click', () => { if (isLoggedIn) sidebar.classList.toggle('open'); });
-        if(mainContent) mainContent.addEventListener('click', (e) => { if (isLoggedIn && window.innerWidth <= 991 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && !hamburgerMenu.contains(e.target)) { sidebar.classList.remove('open'); } });
-
-        function showSaveFeedback(buttonElement, feedbackElementId, message = "✓ Saved!") {
-            let feedbackEl = getEl(feedbackElementId);
-            if (!feedbackEl) { console.warn("Feedback element not found:", feedbackElementId); return; }
-            if (feedbackEl.parentElement !== buttonElement) { buttonElement.appendChild(feedbackEl); }
-
-            const originalButtonTextNode = Array.from(buttonElement.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '');
-            const originalButtonText = originalButtonTextNode ? originalButtonTextNode.textContent.trim() : "Save";
-            
-            const iconNode = buttonElement.querySelector('.btn-icon');
-            if(iconNode) iconNode.style.display = 'none';
-            
-            if (originalButtonTextNode) originalButtonTextNode.nodeValue = 'Saving... ';
-            else buttonElement.insertAdjacentText('afterbegin', 'Saving... ');
-            
-            buttonElement.disabled = true;
-            feedbackEl.innerHTML = '';
-            
-            setTimeout(() => {
-                feedbackEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg> ${message}`;
-                feedbackEl.classList.add('show');
+        // NEW: Function to populate and show the Order Details Modal
+        const showOrderDetails = (orderId) => {
+            const orderRef = ref(db, `orders/${orderId}`);
+            onValue(orderRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    showToast("Order not found.", "error");
+                    return;
+                }
+                const order = snapshot.val();
                 
-                if (originalButtonTextNode) originalButtonTextNode.nodeValue = originalButtonText + ' ';
-                else {
-                    const savingTextNode = Array.from(buttonElement.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.includes('Saving...'));
-                    if (savingTextNode) savingTextNode.remove();
-                }
-                if(iconNode) iconNode.style.display = '';
+                // Populate modal fields
+                document.getElementById('modal-order-id').textContent = `#${orderId.slice(-6).toUpperCase()}`;
+                document.getElementById('modal-order-date').textContent = new Date(order.createdAt).toLocaleString();
+                document.getElementById('modal-customer-name').textContent = order.shippingInfo.name;
+                document.getElementById('modal-customer-phone').textContent = order.shippingInfo.phone;
+                document.getElementById('modal-customer-address').textContent = order.shippingInfo.address;
+                document.getElementById('modal-payment-method').textContent = order.paymentInfo.method;
+                document.getElementById('modal-transaction-id').textContent = order.paymentInfo.transactionId || 'N/A';
+                document.getElementById('modal-total-amount').textContent = `₹${order.totalAmount.toLocaleString('en-IN')}`;
 
-                buttonElement.disabled = false;
-                
-                setTimeout(() => {
-                    feedbackEl.classList.remove('show');
-                    feedbackEl.innerHTML = ''; 
-                }, 2800);
-            }, 350);
-        }
+                // Populate ordered items
+                const itemsContainer = document.getElementById('modal-order-items');
+                itemsContainer.innerHTML = order.items.map(item => `
+                    <div class="item">
+                        <img src="${item.imageUrl}" alt="${item.name}">
+                        <div style="flex-grow: 1;">
+                            <strong>${item.name}</strong>
+                            <div>Quantity: ${item.quantity}</div>
+                        </div>
+                        <div>₹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
+                    </div>
+                `).join('');
 
-        function saveToLocalStorage(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch (e) { console.error("Error saving to LS:", key, e); alert("Error saving data. LocalStorage might be full or disabled.");}}
-        function loadFromLocalStorage(key, def = []) { const s = localStorage.getItem(key); try { return s ? JSON.parse(s) : def; } catch (e) { console.error("Error parsing LS for key:", key, e); return def; } }
-        function loadAdminProductsFromLocalStorage() { adminProductsArray = loadFromLocalStorage(LS_ADMIN_PRODUCTS_KEY); }
-        function loadAdminCategoriesFromLocalStorage() { adminCategoriesArray = loadFromLocalStorage(LS_ADMIN_CATEGORIES_KEY, [{ id: `catDef${Date.now()}`, name: 'Mobiles' }]); }
-        function loadShopCustomizationFromStorage() { const defaultCustomization = { websiteName: "My Awesome Shop", supportContacts: [], themeColor: "#007bff", logoBase64: "", promoYoutubeUrl: "", footerText: "My Awesome Shop. All rights reserved.", adSlots: { header: { enabled: false, content: "" }, footer: { enabled: false, content: "" }, productList: { enabled: false, content: ""} } }; shopCustomization = loadFromLocalStorage(LS_SHOP_CUSTOMIZATION_KEY, defaultCustomization); if (!shopCustomization.adSlots) shopCustomization.adSlots = defaultCustomization.adSlots; else { ['header', 'footer', 'productList'].forEach(slot => { if(shopCustomization.adSlots[slot] === undefined) shopCustomization.adSlots[slot] = defaultCustomization.adSlots[slot];});} if(shopCustomization.supportContacts === undefined) shopCustomization.supportContacts = []; }
-        function loadShopUsersFromStorage() { shopUsersArray = loadFromLocalStorage(LS_SHOP_USERS_KEY); }
-        function loadAdminPostsFromLocalStorage() { adminPostsArray = loadFromLocalStorage(LS_ADMIN_POSTS_KEY); } // For new Post Manager
+                // Set current status
+                const statusSelect = document.getElementById('modal-order-status-select');
+                statusSelect.value = order.status;
 
-        // Product Management 
-        function renderAdminProductTable() {
-            if (!productTableBodyAdmin) return;
-            productTableBodyAdmin.innerHTML = '';
-            if (adminProductsArray.length === 0) {
-                noProductsMessage.classList.remove('hidden');
-            } else {
-                noProductsMessage.classList.add('hidden');
-                adminProductsArray.forEach(p => {
-                    const row = productTableBodyAdmin.insertRow();
-                    row.dataset.id = p.id;
-                    row.innerHTML = `<td><img src="${p.imageData || p.imageUrl || 'https://via.placeholder.com/50?text=N/A'}" class="product-image-thumbnail"></td><td>${p.name||'N/A'}</td><td>${p.brand||'N/A'}</td><td>${currentCurrency} ${parseFloat(p.price||0).toLocaleString()}</td><td>${p.stock||0}</td><td>${p.category||'N/A'}</td><td><button class="action-btn btn-view admin-product-view-btn"><span class="btn-icon">👁️</span>View</button><button class="action-btn btn-edit"><span class="btn-icon">✏️</span>Edit</button><button class="action-btn btn-delete"><span class="btn-icon">🗑️</span>Delete</button></td>`;
-                });
-            }
-            updateDashboardProductCount();
-            updateAdminCategoryProductCounts();
-        }
-        function updateDashboardProductCount() { if(dashboardTotalProductsEl) dashboardTotalProductsEl.textContent = adminProductsArray.length; }
-        if(adminProductImageFileEn) adminProductImageFileEn.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) { adminProductImagePreview.src = 'https://via.placeholder.com/150?text=Preview'; adminProductImageDataBase64Input.value = ''; return; } const reader = new FileReader(); reader.onload = (ev) => { adminProductImagePreview.src = ev.target.result; adminProductImageDataBase64Input.value = ev.target.result; }; reader.readAsDataURL(file); });
-        if(btnAddNewProduct) btnAddNewProduct.addEventListener('click', () => { if (adminCategoriesArray.length === 0) { alert("Please add a category first before adding products."); return; } productFormAdmin.reset(); ['adminProductId', 'adminProductImageDataBase64'].forEach(id=>getEl(id).value=''); getEl('adminProductStockEn').value = '0'; adminProductImagePreview.src = 'https://via.placeholder.com/150?text=Preview'; productFormTitle.textContent = 'Add New Product'; populateAdminCategoryDropdownForProductForm(); productFormContainer.classList.remove('hidden'); productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-        if(btnCancelAdminProductForm) btnCancelAdminProductForm.addEventListener('click', () => {productFormAdmin.reset(); getEl('adminProductStockEn').value = '0'; adminProductImagePreview.src = 'https://via.placeholder.com/150?text=Preview'; productFormContainer.classList.add('hidden');});
-        if(productFormAdmin) productFormAdmin.addEventListener('submit', function(e) { e.preventDefault(); const id = getEl('adminProductId').value; const name = getEl('adminProductNameEn').value.trim(); const brand = getEl('adminProductBrandEn').value.trim(); const imgData = adminProductImageDataBase64Input.value; const desc = adminProductDescriptionEn.value.trim(); const price = parseFloat(getEl('adminProductPriceEn').value); const stock = parseInt(getEl('adminProductStockEn').value) || 0; const cat = adminProductCategorySelect.value; if (!cat || !name || isNaN(price) || !brand) { alert("Category, Name, Brand, and Price are required fields."); return; } const pData = { name, brand, imageData: imgData, description: desc, price: price.toFixed(2), stock, category: cat, tags: [cat.toLowerCase(), brand.toLowerCase()] }; if (id) { const idx = adminProductsArray.findIndex(p => p.id === id); if (idx > -1) { pData.id = id; if (!imgData && adminProductsArray[idx].imageData) pData.imageData = adminProductsArray[idx].imageData; adminProductsArray[idx] = { ...adminProductsArray[idx], ...pData }; } } else { pData.id = `prodAdm${Date.now()}`; adminProductsArray.push(pData); } saveToLocalStorage(LS_ADMIN_PRODUCTS_KEY, adminProductsArray); renderAdminProductTable(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'productFormFeedback'); setTimeout(() => { productFormAdmin.reset(); getEl('adminProductStockEn').value = '0'; adminProductImagePreview.src = 'https://via.placeholder.com/150?text=Preview'; productFormContainer.classList.add('hidden');}, 500); });
-        if(productTableBodyAdmin) productTableBodyAdmin.addEventListener('click', (e) => { const tgt = e.target.closest('.action-btn'); if (!tgt) return; const row = tgt.closest('tr'); if (!row) return; const pId = row.dataset.id; if (tgt.classList.contains('admin-product-view-btn')) openProductDetailsModalAdmin(pId); else if (tgt.classList.contains('btn-edit')) { const p = adminProductsArray.find(pr => pr.id === pId); if (!p) return; getEl('adminProductNameEn').value = p.name || ''; getEl('adminProductBrandEn').value = p.brand || ''; getEl('adminProductPriceEn').value = p.price || ''; getEl('adminProductStockEn').value = p.stock || 0; getEl('adminProductId').value = p.id; getEl('adminProductDescriptionEn').value = p.description || ''; adminProductImagePreview.src = p.imageData || p.imageUrl || 'https://via.placeholder.com/150?text=Preview'; adminProductImageDataBase64Input.value = p.imageData || ''; adminProductImageFileEn.value = ''; populateAdminCategoryDropdownForProductForm(); adminProductCategorySelect.value = p.category; productFormTitle.textContent = 'Edit Product'; productFormContainer.classList.remove('hidden'); productFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); } else if (tgt.classList.contains('btn-delete')) { if (confirm('Are you sure you want to delete this product?')) { adminProductsArray = adminProductsArray.filter(p => p.id !== pId); saveToLocalStorage(LS_ADMIN_PRODUCTS_KEY, adminProductsArray); renderAdminProductTable(); alert('Product deleted successfully!'); } } });
-        function openProductDetailsModalAdmin(productId) { const p = adminProductsArray.find(pr => pr.id === productId); if (!p) return; getEl('modalProductNameAdmin').textContent = p.name || 'Product Details'; getEl('modalProductImageAdmin').src = p.imageData || p.imageUrl || 'https://via.placeholder.com/300?text=No Image'; getEl('modalProductBrandAdmin').textContent = p.brand || 'N/A'; getEl('modalProductPriceAdmin').textContent = `${currentCurrency} ${parseFloat(p.price || 0).toLocaleString()}`; getEl('modalProductStockAdmin').textContent = p.stock || 0; getEl('modalProductCategoryAdmin').textContent = p.category || 'N/A'; getEl('modalProductDescriptionAdmin').textContent = p.description || 'N/A'; productDetailsModalAdmin.classList.add('active');}
-        if(closeProductDetailsModalAdminBtn) closeProductDetailsModalAdminBtn.addEventListener('click', () => productDetailsModalAdmin.classList.remove('active'));
+                // Store order ID on save button
+                document.getElementById('save-order-status-btn').dataset.orderId = orderId;
 
-        // Category Management
-        function renderAdminCategoryTable() {
-            if(!categoryTableBodyAdmin) return;
-            categoryTableBodyAdmin.innerHTML = '';
-            if (adminCategoriesArray.length === 0) {
-                if (noCategoriesMessageAdmin) noCategoriesMessageAdmin.classList.remove('hidden');
-                // categoryTableBodyAdmin.innerHTML = `<tr><td colspan="3" class="no-data-cell">No categories defined yet. Add one to get started!</td></tr>`; // This line is redundant if noCategoriesMessageAdmin is shown
-            } else {
-                if (noCategoriesMessageAdmin) noCategoriesMessageAdmin.classList.add('hidden');
-                adminCategoriesArray.forEach(c => {
-                    const row = categoryTableBodyAdmin.insertRow();
-                    row.dataset.id = c.id;
-                    const count = adminProductsArray.filter(p => p.category === c.name).length;
-                    row.innerHTML = `<td>${c.name}</td><td class="category-product-count">${count}</td><td><button class="action-btn btn-edit"><span class="btn-icon">✏️</span>Edit</button><button class="action-btn btn-delete"><span class="btn-icon">🗑️</span>Delete</button></td>`;
-                });
-            }
-            populateAdminCategoryDropdownForProductForm();
-        }
-        function populateAdminCategoryDropdownForProductForm() { if(!adminProductCategorySelect) return; adminProductCategorySelect.innerHTML = '<option value="">-- Select Category --</option>'; if (adminCategoriesArray.length === 0) { adminProductCategorySelect.innerHTML = '<option value="">-- Add Categories First --</option>'; adminProductCategorySelect.disabled = true; return; } adminProductCategorySelect.disabled = false; adminCategoriesArray.forEach(c => { const opt = document.createElement('option'); opt.value = c.name; opt.textContent = c.name; adminProductCategorySelect.appendChild(opt); }); }
-        function updateAdminCategoryProductCounts() { if (!categoryTableBodyAdmin) return; adminCategoriesArray.forEach(c => { const count = adminProductsArray.filter(p => p.category === c.name).length; const row = categoryTableBodyAdmin.querySelector(`tr[data-id="${c.id}"]`); if (row && row.cells[1]) row.cells[1].textContent = count; }); }
-        if(btnAddNewCategory) btnAddNewCategory.addEventListener('click', () => { categoryFormAdmin.reset(); getEl('adminCategoryId').value = ''; categoryFormTitle.textContent = 'Add New Category'; categoryFormContainer.classList.remove('hidden'); categoryFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });});
-        if(btnCancelAdminCategoryForm) btnCancelAdminCategoryForm.addEventListener('click', () => {categoryFormAdmin.reset(); categoryFormContainer.classList.add('hidden');});
-        if(categoryFormAdmin) categoryFormAdmin.addEventListener('submit', function(e) { e.preventDefault(); const id = getEl('adminCategoryId').value; const name = getEl('adminCategoryNameEn').value.trim(); if (!name) { alert("Category name is required."); return; } if (id) { const idx = adminCategoriesArray.findIndex(c => c.id === id); if (idx > -1) { const oldName = adminCategoriesArray[idx].name; if (adminCategoriesArray.some(c => c.name.toLowerCase() === name.toLowerCase() && c.id !== id)) { alert(`Another category with the name "${name}" already exists.`); return; } adminCategoriesArray[idx].name = name; if (oldName !== name) { adminProductsArray.forEach(p => { if (p.category === oldName) p.category = name; }); saveToLocalStorage(LS_ADMIN_PRODUCTS_KEY, adminProductsArray); renderAdminProductTable(); } } } else { if (adminCategoriesArray.some(c => c.name.toLowerCase() === name.toLowerCase())) { alert(`Category "${name}" already exists.`); return; } adminCategoriesArray.push({ id: `catAdm${Date.now()}`, name }); } saveToLocalStorage(LS_ADMIN_CATEGORIES_KEY, adminCategoriesArray); renderAdminCategoryTable(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'categoryFormFeedback'); setTimeout(() => {categoryFormAdmin.reset(); categoryFormContainer.classList.add('hidden');}, 500); });
-        if(categoryTableBodyAdmin) categoryTableBodyAdmin.addEventListener('click', (e) => { const tgt = e.target.closest('.action-btn'); if (!tgt) return; const row = tgt.closest('tr'); if (!row || !row.dataset.id) return; const cId = row.dataset.id; const cName = row.cells[0].textContent; if (tgt.classList.contains('btn-edit')) { const c = adminCategoriesArray.find(cat => cat.id === cId); if(c) { getEl('adminCategoryId').value = c.id; getEl('adminCategoryNameEn').value = c.name; categoryFormTitle.textContent = 'Edit Category'; categoryFormContainer.classList.remove('hidden'); categoryFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } else if (tgt.classList.contains('btn-delete')) { const pCount = adminProductsArray.filter(p => p.category === cName).length; if (pCount > 0) { alert("Cannot delete category: it still contains products. Please reassign or delete products first."); return; } if (confirm('Are you sure you want to delete this category?')) { adminCategoriesArray = adminCategoriesArray.filter(c => c.id !== cId); saveToLocalStorage(LS_ADMIN_CATEGORIES_KEY, adminCategoriesArray); renderAdminCategoryTable(); alert('Category deleted!'); } } });
+                // Show the modal
+                document.getElementById('order-details-modal').classList.add('active');
 
-        // Order Management
-        function loadAndDisplayShopOrders() {
-            if(!orderTableBodyAdmin) return;
-            const allOrders = loadFromLocalStorage(LS_SHOP_ORDERS_KEY);
-            orderTableBodyAdmin.innerHTML = '';
-            
-            const currentFilterStatus = orderStatusFilterAdmin ? orderStatusFilterAdmin.value : 'all';
-            let filteredOrders = allOrders;
-            if (currentFilterStatus !== 'all') {
-                filteredOrders = allOrders.filter(order => (order.status || 'Pending') === currentFilterStatus);
-            }
-
-            const statusSortOrder = { 'Pending': 1, 'Processing': 2, 'Shipped': 3, 'Completed': 10, 'Cancelled': 11, 'Rejected': 12 };
-            filteredOrders.sort((a, b) => {
-                const statusA = a.status || 'Pending'; const statusB = b.status || 'Pending';
-                const orderA = statusSortOrder[statusA] || 99; const orderB = statusSortOrder[statusB] || 99;
-                if (orderA !== orderB) return orderA - orderB;
-                return new Date(b.date || 0) - new Date(a.date || 0);
-            });
-
-            if (filteredOrders.length === 0) {
-                let message = "No orders found.";
-                if (currentFilterStatus !== 'all') message = `No orders found with status: ${currentFilterStatus}.`;
-                else if (allOrders.length === 0) message = "No new orders. Check back later!";
-                
-                if(noOrdersMessageAdmin) noOrdersMessageAdmin.textContent = message;
-                if(noOrdersMessageAdmin) noOrdersMessageAdmin.classList.remove('hidden');
-                // orderTableBodyAdmin.innerHTML = `<tr><td colspan="9" class="no-data-cell">${message}</td></tr>`; // Redundant if p tag is used
-            } else {
-                if(noOrdersMessageAdmin) noOrdersMessageAdmin.classList.add('hidden');
-                filteredOrders.forEach(o => {
-                    const row = orderTableBodyAdmin.insertRow();
-                    row.dataset.orderId = o.orderId;
-                    row.dataset.screenshotUrl = o.screenshotUrl || '';
-                    const userIdDisplay = o.userId ? (o.userId.startsWith('guest_') ? 'Guest' : o.userId.substring(0, 8) + '...') : 'N/A';
-                    const trxIdDisplay = o.transactionId ? (o.transactionId.length > 10 ? o.transactionId.substring(0, 10) + '...' : o.transactionId) : 'N/A';
-                    const isPaymentVerified = (o.paymentVerified === true || String(o.paymentVerified).toLowerCase() === 'yes');
-                    row.innerHTML = `<td>${o.orderId || 'N/A'}</td><td>${o.customerName || 'N/A'}</td><td>${userIdDisplay}</td><td>${o.date ? new Date(o.date).toLocaleString() : 'N/A'}</td><td>${currentCurrency} ${parseFloat(o.totalAmount || 0).toLocaleString()}</td><td title="${o.transactionId || ''}">${trxIdDisplay}</td><td>${o.status || 'Pending'}</td><td>${isPaymentVerified ? 'Yes' : 'No'}</td><td><button class="action-btn btn-view admin-order-view-btn"><span class="btn-icon">👁️</span>View</button></td>`;
-                });
-            }
-            
-            let totalSalesForAllOrders = 0;
-            allOrders.forEach(o => {
-                if ((o.paymentVerified === true || String(o.paymentVerified).toLowerCase() === 'yes') && o.totalAmount) {
-                    totalSalesForAllOrders += parseFloat(o.totalAmount);
-                }
-            });
-            currentTotalSales = totalSalesForAllOrders;
-            if(dashboardTotalOrdersEl) dashboardTotalOrdersEl.textContent = allOrders.length;
-            if(dashboardTotalSalesEl) dashboardTotalSalesEl.textContent = `${currentCurrency} ${currentTotalSales.toLocaleString()}`;
-        }
-        if(btnRefreshAdminOrders) btnRefreshAdminOrders.addEventListener('click', loadAndDisplayShopOrders);
-        if(orderStatusFilterAdmin) orderStatusFilterAdmin.addEventListener('change', loadAndDisplayShopOrders);
-        if(orderTableBodyAdmin) orderTableBodyAdmin.addEventListener('click', (e) => {
-            const tgt = e.target.closest('.action-btn.admin-order-view-btn'); if (!tgt) return;
-            const row = tgt.closest('tr'); if (!row) return;
-            const oId = row.dataset.orderId; const orders = loadFromLocalStorage(LS_SHOP_ORDERS_KEY);
-            const oData = orders.find(o => o.orderId === oId); if (!oData) return;
-
-            getEl('modalOrderDetailsTitle').textContent = `Order Details: ${oData.orderId}`;
-            getEl('modalOrderIdInBody').textContent = oData.orderId || 'N/A';
-            getEl('modalCustomerName').textContent = oData.customerName || 'N/A';
-            getEl('modalOrderDate').textContent = oData.date ? new Date(oData.date).toLocaleString() : 'N/A';
-            getEl('modalOrderAmount').textContent = `${currentCurrency} ${parseFloat(oData.totalAmount || 0).toLocaleString()}`;
-            getEl('modalPaymentVerified').textContent = (oData.paymentVerified === true || String(oData.paymentVerified).toLowerCase() === 'yes') ? 'Yes' : 'No';
-            const currentOrderStatus = oData.status || 'Pending';
-            getEl('modalCurrentStatus').textContent = currentOrderStatus;
-            getEl('modalOrderScreenshot').src = oData.screenshotUrl || 'https://via.placeholder.com/400x300?text=No+Screenshot';
-            
-            modalOrderItemsList.innerHTML = '';
-            if(oData.items && oData.items.length > 0){ oData.items.forEach(i => { const li = document.createElement('li'); li.textContent = `${i.name} (x${i.quantity}) - ${currentCurrency} ${(i.price * i.quantity).toLocaleString()}`; modalOrderItemsList.appendChild(li); });
-            } else { modalOrderItemsList.innerHTML = '<li>No items listed for this order.</li>'; }
-            modalOrderStatusSelect.value = currentOrderStatus;
-            modalEditingOrderIdInput.value = oData.orderId;
-            modalOrderStatusSelect.disabled = (currentOrderStatus === 'Completed' || currentOrderStatus === 'Rejected');
-
-            const modalOrderUserIdentifierEl = getEl('modalOrderUserIdentifier'); const modalCustomerEmailEl = getEl('modalCustomerEmail'); const modalCustomerMobileEl = getEl('modalCustomerMobile'); const modalCustomerAddressEl = getEl('modalCustomerAddress');
-            let userIdentifierTextOutput = '(Guest User)'; let customerEmail = oData.customerEmail || 'N/A';
-            let customerMobile = oData.customerMobile || 'Not provided'; 
-            let customerAddress = oData.customerAddress || 'Not provided';
-            if (oData.userId) {
-                if (oData.userId.startsWith('guest_')) { userIdentifierTextOutput = `Guest User (ID: ${oData.userId})`; } 
-                else { 
-                    const user = shopUsersArray.find(u => u.id === oData.userId);
-                    if (user) { userIdentifierTextOutput = `Registered User: ${user.username} (ID: ${oData.userId})`; customerEmail = user.email || customerEmail; customerMobile = (user.mobile && user.mobile.trim() !== "") ? user.mobile : customerMobile; customerAddress = (user.address && user.address.trim() !== "") ? user.address : customerAddress;
-                    } else { userIdentifierTextOutput = `Registered User ID: ${oData.userId} (Profile details not found)`; }
-                }
-            } else { userIdentifierTextOutput = 'User ID Not Provided in Order'; }
-            modalOrderUserIdentifierEl.textContent = userIdentifierTextOutput; modalCustomerEmailEl.textContent = customerEmail;
-            modalCustomerMobileEl.textContent = customerMobile; // This populates the mobile field
-            modalCustomerAddressEl.textContent = customerAddress;
-            orderDetailsModal.classList.add('active');
-        });
-        if(closeOrderModalBtn) closeOrderModalBtn.addEventListener('click', () => orderDetailsModal.classList.remove('active'));
-        if(modalOrderStatusSelect) modalOrderStatusSelect.addEventListener('change', function() {
-            const oId = modalEditingOrderIdInput.value; const newStatus = this.value;
-            let orders = loadFromLocalStorage(LS_SHOP_ORDERS_KEY); const oIdx = orders.findIndex(o => o.orderId === oId);
-            if (oIdx > -1) {
-                const orderBeingUpdated = orders[oIdx];
-                const wasPreviouslyVerified = (orderBeingUpdated.paymentVerified === true || String(orderBeingUpdated.paymentVerified).toLowerCase() === 'yes');
-                orderBeingUpdated.status = newStatus;
-                if ((newStatus === 'Completed' || newStatus === 'Shipped') && !wasPreviouslyVerified) orderBeingUpdated.paymentVerified = true;
-                else if ((newStatus === 'Cancelled' || newStatus === 'Rejected') && wasPreviouslyVerified) orderBeingUpdated.paymentVerified = false;
-                saveToLocalStorage(LS_SHOP_ORDERS_KEY, orders); loadAndDisplayShopOrders(); 
-                getEl('modalCurrentStatus').textContent = newStatus;
-                getEl('modalPaymentVerified').textContent = (orderBeingUpdated.paymentVerified === true || String(orderBeingUpdated.paymentVerified).toLowerCase() === 'yes') ? 'Yes' : 'No';
-                modalOrderStatusSelect.disabled = (newStatus === 'Completed' || newStatus === 'Rejected');
-                alert(`Order ${oId} status updated to ${newStatus}!`);
-            }
-        });
-
-        // --- Post Manager JavaScript ---
-        function loadAdminPostsFromStorage() { adminPostsArray = loadFromLocalStorage(LS_ADMIN_POSTS_KEY, []); }
-        function renderManagedPostTable() {
-            if (!managedPostTableBodyAdmin) return;
-            managedPostTableBodyAdmin.innerHTML = '';
-            const sortedPosts = [...adminPostsArray].sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-            if (sortedPosts.length === 0) {
-                if(noManagedPostsMessage) noManagedPostsMessage.classList.remove('hidden');
-            } else {
-                if(noManagedPostsMessage) noManagedPostsMessage.classList.add('hidden');
-                sortedPosts.forEach(post => {
-                    const row = managedPostTableBodyAdmin.insertRow();
-                    row.dataset.id = post.id;
-                    const linkDisplay = post.link ? `<a href="${post.link}" target="_blank" title="${post.link}">${post.link.length > 30 ? post.link.substring(0,27)+'...' : post.link}</a>` : 'N/A';
-                    row.innerHTML = `
-                        <td>${post.title}</td>
-                        <td>${post.type || 'General'}</td>
-                        <td>${linkDisplay}</td>
-                        <td>${post.timestamp ? new Date(post.timestamp).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <button class="action-btn btn-edit"><span class="btn-icon">✏️</span>Edit</button>
-                            <button class="action-btn btn-delete"><span class="btn-icon">🗑️</span>Delete</button>
-                        </td>`;
-                });
-            }
-        }
-        if(btnAddNewManagedPost) btnAddNewManagedPost.addEventListener('click', () => {
-            if (adminPostsArray.length >= MAX_POSTS) {
-                alert(`Maximum of ${MAX_POSTS} posts already reached. Please delete an old post to add a new one.`);
-                return;
-            }
-            managedPostFormAdmin.reset();
-            getEl('adminManagedPostId').value = '';
-            managedPostFormTitle.textContent = 'Add New Post';
-            managedPostFormContainer.classList.remove('hidden');
-            managedPostFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-        if(btnCancelAdminManagedPostForm) btnCancelAdminManagedPostForm.addEventListener('click', () => {
-            managedPostFormAdmin.reset();
-            managedPostFormContainer.classList.add('hidden');
-        });
-        if(managedPostFormAdmin) managedPostFormAdmin.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = getEl('adminManagedPostId').value;
-            const title = getEl('adminManagedPostTitle').value.trim();
-            const content = getEl('adminManagedPostContent').value.trim();
-            const link = getEl('adminManagedPostLink').value.trim();
-            const type = getEl('adminManagedPostType').value;
-
-            if (!title || !content) {
-                alert("Post Title and Content are required.");
-                return;
-            }
-
-            if (!id && adminPostsArray.length >= MAX_POSTS) {
-                alert(`Cannot add new post. Maximum of ${MAX_POSTS} posts allowed.`);
-                return;
-            }
-            
-            const postData = { title, content, link, type, timestamp: Date.now() };
-
-            if (id) { // Editing existing post
-                const index = adminPostsArray.findIndex(p => p.id === id);
-                if (index > -1) {
-                    adminPostsArray[index] = { ...adminPostsArray[index], ...postData, timestamp: adminPostsArray[index].timestamp }; // Keep original timestamp on edit
-                }
-            } else { // Adding new post
-                postData.id = `postAdm${Date.now()}`;
-                adminPostsArray.push(postData);
-            }
-            saveToLocalStorage(LS_ADMIN_POSTS_KEY, adminPostsArray);
-            renderManagedPostTable();
-            showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'managedPostFormFeedback');
-            setTimeout(() => {
-                managedPostFormAdmin.reset();
-                managedPostFormContainer.classList.add('hidden');
-            }, 500);
-        });
-        if(managedPostTableBodyAdmin) managedPostTableBodyAdmin.addEventListener('click', (e) => {
-            const target = e.target.closest('.action-btn');
-            if (!target) return;
-            const row = target.closest('tr');
-            if (!row || !row.dataset.id) return;
-            const postId = row.dataset.id;
-
-            if (target.classList.contains('btn-edit')) {
-                const post = adminPostsArray.find(p => p.id === postId);
-                if (post) {
-                    getEl('adminManagedPostId').value = post.id;
-                    getEl('adminManagedPostTitle').value = post.title;
-                    getEl('adminManagedPostContent').value = post.content;
-                    getEl('adminManagedPostLink').value = post.link || '';
-                    getEl('adminManagedPostType').value = post.type || 'General';
-                    managedPostFormTitle.textContent = 'Edit Post';
-                    managedPostFormContainer.classList.remove('hidden');
-                    managedPostFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            } else if (target.classList.contains('btn-delete')) {
-                if (confirm('Are you sure you want to delete this post?')) {
-                    adminPostsArray = adminPostsArray.filter(p => p.id !== postId);
-                    saveToLocalStorage(LS_ADMIN_POSTS_KEY, adminPostsArray);
-                    renderManagedPostTable();
-                    alert('Post deleted successfully!');
-                }
-            }
-        });
-        // --- End Post Manager JavaScript ---
+            }, { onlyOnce: true });
+        };
         
-        // User Management
-        function renderUserTable() {
-            if (!userTableBodyAdmin) return;
-            userTableBodyAdmin.innerHTML = '';
-            if (shopUsersArray.length === 0) {
-                if(noUsersMessage) noUsersMessage.classList.remove('hidden');
-            } else {
-                if(noUsersMessage) noUsersMessage.classList.add('hidden');
-                const allOrders = loadFromLocalStorage(LS_SHOP_ORDERS_KEY);
-                shopUsersArray.forEach(user => {
-                    const userOrderCount = allOrders.filter(order => order.userId === user.id).length;
-                    const row = userTableBodyAdmin.insertRow();
-                    row.dataset.userId = user.id;
-                    row.innerHTML = `<td>${user.id}</td><td>${user.username || 'N/A'}</td><td>${user.email|| 'N/A'}</td><td>${userOrderCount}</td><td><button class="action-btn btn-reset-pass"><span class="btn-icon">🔑</span>Reset Pass</button><button class="action-btn btn-delete"><span class="btn-icon">🗑️</span>Delete</button></td>`;
-                });
+        // General Event Listeners
+        document.getElementById('orders-table-body').addEventListener('click', (e) => {
+            if (e.target.classList.contains('view-order-details-btn')) {
+                const orderId = e.target.dataset.id;
+                showOrderDetails(orderId);
             }
-            updateDashboardUserCount();
-        }
-        if(userTableBodyAdmin) userTableBodyAdmin.addEventListener('click', (e) => { const tgt = e.target.closest('.action-btn'); if (!tgt) return; const row = tgt.closest('tr'); if (!row || !row.dataset.userId) return; const userId = row.dataset.userId; if (tgt.classList.contains('btn-reset-pass')) { if (confirm(`Reset password for user ${userId} to 'password123'?`)) { const idx = shopUsersArray.findIndex(u => u.id === userId); if (idx > -1) { shopUsersArray[idx].password = 'password123'; saveToLocalStorage(LS_SHOP_USERS_KEY, shopUsersArray); alert(`Password for ${shopUsersArray[idx].username} has been reset to 'password123'.`); }}} else if (tgt.classList.contains('btn-delete')) { if (confirm(`Are you sure you want to delete user ${userId}? Their orders will not be deleted.`)) { shopUsersArray = shopUsersArray.filter(u => u.id !== userId); saveToLocalStorage(LS_SHOP_USERS_KEY, shopUsersArray); renderUserTable(); alert(`User ${userId} deleted.`);}} });
-        function updateDashboardUserCount() { if(dashboardTotalUsersEl) dashboardTotalUsersEl.textContent = shopUsersArray.length; }
-
-        // Customize Site & Sidebar Logo
-        const PREDEFINED_COLORS = ["#f57224", "#007bff", "#28a745", "#dc3545", "#ffc107", "#6f42c1", "#20c997"]; function setupColorPicker() { if(!adminThemeColorPicker) return; adminThemeColorPicker.innerHTML = ''; PREDEFINED_COLORS.forEach(color => { const swatch = document.createElement('div'); swatch.className = 'color-swatch'; swatch.style.backgroundColor = color; swatch.dataset.color = color; swatch.title = color; swatch.addEventListener('click', () => { adminCustomizeThemeColor.value = color; adminCustomizeThemeColorCustom.value = color; querySelAll('.color-swatch.selected').forEach(s => s.classList.remove('selected')); swatch.classList.add('selected'); }); adminThemeColorPicker.appendChild(swatch); }); } if(adminCustomizeThemeColorCustom) adminCustomizeThemeColorCustom.addEventListener('input', (e) => { adminCustomizeThemeColor.value = e.target.value; querySelAll('.color-swatch.selected').forEach(s => s.classList.remove('selected')); }); if(adminCustomizeLogoFile) adminCustomizeLogoFile.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) { adminCustomizeLogoPreview.src='https://via.placeholder.com/150?text=Logo+Preview'; adminCustomizeLogoBase64.value=''; return; } const reader = new FileReader(); reader.onload = (ev) => { adminCustomizeLogoPreview.src = ev.target.result; adminCustomizeLogoBase64.value = ev.target.result; }; reader.readAsDataURL(file); });
-        function updateSidebarLogo() { if(!sidebarLogoDiv) return; if (shopCustomization.logoBase64) { sidebarLogoDiv.innerHTML = `<img src="${shopCustomization.logoBase64}" alt="${shopCustomization.websiteName || 'Logo'}">`; } else { sidebarLogoDiv.textContent = shopCustomization.websiteName || "Shop Admin Pro"; } }
-        function loadShopCustomizationSettings() { setupColorPicker(); if(adminCustomizeWebsiteNameInput) adminCustomizeWebsiteNameInput.value = shopCustomization.websiteName || "My Shop"; if(adminCustomizeLogoBase64) adminCustomizeLogoBase64.value = shopCustomization.logoBase64 || ""; if(adminCustomizeLogoPreview) adminCustomizeLogoPreview.src = shopCustomization.logoBase64 || "https://via.placeholder.com/150?text=Logo Preview"; if(adminCustomizeThemeColor) adminCustomizeThemeColor.value = shopCustomization.themeColor || "#007bff"; if(adminCustomizeThemeColorCustom) adminCustomizeThemeColorCustom.value = shopCustomization.themeColor || "#007bff"; if(adminThemeColorPicker){ const currentSwatch = adminThemeColorPicker.querySelector(`.color-swatch[data-color="${shopCustomization.themeColor}"]`); if (currentSwatch) currentSwatch.classList.add('selected'); } if(adminCustomizePromoYoutubeUrl) adminCustomizePromoYoutubeUrl.value = shopCustomization.promoYoutubeUrl || ""; if(adminCustomizeFooterText) adminCustomizeFooterText.value = shopCustomization.footerText || `${shopCustomization.websiteName || "My Shop"}. All rights reserved.`; updateSidebarLogo(); }
-        if (websiteCustomizationForm) { websiteCustomizationForm.addEventListener('submit', function(e) { e.preventDefault(); shopCustomization.websiteName = adminCustomizeWebsiteNameInput.value.trim() || "My Shop"; shopCustomization.logoBase64 = adminCustomizeLogoBase64.value; shopCustomization.themeColor = adminCustomizeThemeColor.value || "#007bff"; shopCustomization.promoYoutubeUrl = adminCustomizePromoYoutubeUrl.value.trim(); shopCustomization.footerText = adminCustomizeFooterText.value.trim() || `${shopCustomization.websiteName}. All rights reserved.`; saveToLocalStorage(LS_SHOP_CUSTOMIZATION_KEY, shopCustomization); updateSidebarLogo(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'customizeFormFeedback', "✓ Visuals Saved!"); });}
-
-        // Support Info
-        if(adminSupportContactIsLinkCheckbox) adminSupportContactIsLinkCheckbox.addEventListener('change', function() { adminSupportContactLinkPrefixGroup.classList.toggle('hidden', !this.checked); if (!this.checked) { getEl('adminSupportContactLinkPrefix').value = ''; }});
-        if(btnAdminAddNewSupportContact) btnAdminAddNewSupportContact.addEventListener('click', () => { adminSupportContactFormAdmin.reset(); getEl('adminSupportContactId').value = ''; adminSupportContactFormTitle.textContent = 'Add New Support Contact'; adminSupportContactIsLinkCheckbox.checked = false; adminSupportContactLinkPrefixGroup.classList.add('hidden'); getEl('adminSupportContactLinkPrefix').value = ''; adminSupportContactFormContainer.classList.remove('hidden'); adminSupportContactFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-        if(btnAdminCancelSupportContactForm) btnAdminCancelSupportContactForm.addEventListener('click', () => { adminSupportContactFormAdmin.reset(); adminSupportContactIsLinkCheckbox.checked = false; adminSupportContactLinkPrefixGroup.classList.add('hidden'); adminSupportContactFormContainer.classList.add('hidden'); });
-        function renderAdminSupportContactTable() {
-            if(!adminSupportContactTableBody || !adminNoSupportContactsMessage) return;
-            adminSupportContactTableBody.innerHTML = '';
-            if (!shopCustomization.supportContacts || shopCustomization.supportContacts.length === 0) {
-                adminNoSupportContactsMessage.classList.remove('hidden');
-            } else {
-                adminNoSupportContactsMessage.classList.add('hidden');
-                shopCustomization.supportContacts.forEach(c => {
-                    const row = adminSupportContactTableBody.insertRow();
-                    row.dataset.id = c.id;
-                    row.innerHTML = `<td>${c.displayText}</td><td>${c.contactValue}</td><td>${c.isLink ? 'Yes'+(c.linkPrefix ? ` (${c.linkPrefix})`:'') : 'No'}</td><td><button class="action-btn btn-edit"><span class="btn-icon">✏️</span>Edit</button><button class="action-btn btn-delete"><span class="btn-icon">🗑️</span>Delete</button></td>`;
-                });
-            }
-        }
-        if(adminSupportContactFormAdmin) adminSupportContactFormAdmin.addEventListener('submit', function(e) { e.preventDefault(); const id = getEl('adminSupportContactId').value; const displayText = getEl('adminSupportContactDisplayText').value.trim(); const contactValue = getEl('adminSupportContactValue').value.trim(); const isLink = adminSupportContactIsLinkCheckbox.checked; const linkPrefix = getEl('adminSupportContactLinkPrefix').value.trim(); if (!displayText || !contactValue) { alert("Display Text & Contact Value are required."); return; } if (isLink && !linkPrefix && !contactValue.match(/^(tel:|mailto:|https?:\/\/)/i)) { alert("For a clickable link, please provide a Link Prefix (e.g., 'tel:', 'mailto:') or ensure the Contact Value is a full URL (e.g., 'https://wa.me/yournumber')."); return; } const contactData = { displayText, contactValue, isLink, linkPrefix: isLink ? linkPrefix : '' }; if (id) { const index = shopCustomization.supportContacts.findIndex(c => c.id === id); if (index > -1) { shopCustomization.supportContacts[index] = { ...shopCustomization.supportContacts[index], ...contactData }; } } else { contactData.id = `contact${Date.now()}`; shopCustomization.supportContacts.push(contactData); } saveToLocalStorage(LS_SHOP_CUSTOMIZATION_KEY, shopCustomization); renderAdminSupportContactTable(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'supportContactFormFeedback', '✓ Contact Saved!'); setTimeout(() => {adminSupportContactFormAdmin.reset(); adminSupportContactIsLinkCheckbox.checked = false; adminSupportContactLinkPrefixGroup.classList.add('hidden'); adminSupportContactFormContainer.classList.add('hidden');}, 500); });
-        if(adminSupportContactTableBody) adminSupportContactTableBody.addEventListener('click', (e) => { const target = e.target.closest('.action-btn'); if (!target) return; const row = target.closest('tr'); if (!row || !row.dataset.id) return; const contactId = row.dataset.id; if (target.classList.contains('btn-edit')) { const contact = shopCustomization.supportContacts.find(c => c.id === contactId); if (contact) { getEl('adminSupportContactId').value = contact.id; getEl('adminSupportContactDisplayText').value = contact.displayText; getEl('adminSupportContactValue').value = contact.contactValue; adminSupportContactIsLinkCheckbox.checked = contact.isLink; getEl('adminSupportContactLinkPrefix').value = contact.linkPrefix || ''; adminSupportContactLinkPrefixGroup.classList.toggle('hidden', !contact.isLink); adminSupportContactFormTitle.textContent = 'Edit Support Contact'; adminSupportContactFormContainer.classList.remove('hidden'); adminSupportContactFormContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } else if (target.classList.contains('btn-delete')) { if (confirm("Are you sure you want to delete this support contact?")) { shopCustomization.supportContacts = shopCustomization.supportContacts.filter(c => c.id !== contactId); saveToLocalStorage(LS_SHOP_CUSTOMIZATION_KEY, shopCustomization); renderAdminSupportContactTable(); alert("Support contact deleted!"); } } });
-
-        // Monetization
-        function applyAdminAdPlaceholders() {
-            if(!adminHeaderAdPlaceholder || !adminFooterAdPlaceholder) return;
-            const adSlots = shopCustomization.adSlots || { header: {}, footer: {}, productList: {} };
-
-            if (adSlots.header.enabled) {
-                adminHeaderAdPlaceholder.style.display = 'block';
-                if (adSlots.header.content && adSlots.header.content.trim() !== "") {
-                    adminHeaderAdPlaceholder.innerHTML = adSlots.header.content; // Directly inject HTML
-                } else {
-                    adminHeaderAdPlaceholder.textContent = 'Header Ad Slot (Enabled - No Code Provided)';
-                }
-            } else {
-                adminHeaderAdPlaceholder.textContent = 'Header Ad Slot (Disabled)';
-                adminHeaderAdPlaceholder.style.display = 'none';
-            }
-
-            if (adSlots.footer.enabled) {
-                adminFooterAdPlaceholder.style.display = 'block';
-                if (adSlots.footer.content && adSlots.footer.content.trim() !== "") {
-                    adminFooterAdPlaceholder.innerHTML = adSlots.footer.content; // Directly inject HTML
-                } else {
-                    adminFooterAdPlaceholder.textContent = 'Footer Ad Slot (Enabled - No Code Provided)';
-                }
-            } else {
-                adminFooterAdPlaceholder.textContent = 'Footer Ad Slot (Disabled)';
-                adminFooterAdPlaceholder.style.display = 'none';
-            }
-        }
-        function loadMonetizationSettings() { const adSlots = shopCustomization.adSlots || { header: {}, footer: {}, productList: {} }; getEl('enableHeaderAdSlot').checked = adSlots.header.enabled || false; getEl('headerAdSlotContent').value = adSlots.header.content || ''; getEl('enableFooterAdSlot').checked = adSlots.footer.enabled || false; getEl('footerAdSlotContent').value = adSlots.footer.content || ''; getEl('enableProductListAdSlot').checked = adSlots.productList.enabled || false; getEl('productListAdSlotContent').value = adSlots.productList.content || ''; applyAdminAdPlaceholders(); }
-        if(monetizationSettingsForm) monetizationSettingsForm.addEventListener('submit', function(e) { e.preventDefault(); shopCustomization.adSlots = { header: { enabled: getEl('enableHeaderAdSlot').checked, content: getEl('headerAdSlotContent').value }, footer: { enabled: getEl('enableFooterAdSlot').checked, content: getEl('footerAdSlotContent').value }, productList: { enabled: getEl('enableProductListAdSlot').checked, content: getEl('productListAdSlotContent').value } }; saveToLocalStorage(LS_SHOP_CUSTOMIZATION_KEY, shopCustomization); applyAdminAdPlaceholders(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'monetizationFormFeedback'); });
-
-        // Settings
-        if(storeInfoForm) storeInfoForm.addEventListener('submit', function(e) { e.preventDefault(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'storeInfoFormFeedback', '✓ Store Info Saved'); });
-        if(storeCurrencySet) storeCurrencySet.addEventListener('change', function() { updateCurrencyDisplay(this.value); });
-        function setupQrUpload(chkId, cfgId, fileId, prevId, b64Id) { const chk = getEl(chkId), cfg = getEl(cfgId), fil = getEl(fileId), prv = getEl(prevId), b64 = getEl(b64Id); if(!chk||!cfg||!fil||!prv||!b64)return; chk.addEventListener('change', function(){cfg.classList.toggle('hidden',!this.checked);}); fil.addEventListener('change', (e)=>{const f=e.target.files[0];if(f){const r=new FileReader();r.onload=(ev)=>{prv.src=ev.target.result;b64.value=ev.target.result;prv.classList.remove('hidden');};r.readAsDataURL(f);}else if(!b64.value){prv.src='https://via.placeholder.com/120?text=QR';prv.classList.add('hidden');}}); }
-        setupQrUpload('enableEsewa', 'esewaConfig', 'esewaQrUpload', 'esewaQrPreview', 'esewaQrBase64'); setupQrUpload('enableKhalti', 'khaltiConfig', 'khaltiQrUpload', 'khaltiQrPreview', 'khaltiQrBase64'); setupQrUpload('enableBankTransfer', 'bankConfig', 'bankQrUpload', 'bankQrPreview', 'bankQrBase64');
-        function loadPaymentSettings() { const s = loadFromLocalStorage(LS_ADMIN_PAYMENT_SETTINGS_KEY, {}); getEl('enableCOD').checked = s.enableCOD !== undefined ? s.enableCOD : true; ['Esewa', 'Khalti', 'BankTransfer'].forEach(p => { const pL = p.toLowerCase(); const chk = getEl(`enable${p}`); if(!chk) return; chk.checked = s[`enable${p}`] || false; const cfgEl = getEl(`${pL}Config`); if(cfgEl) cfgEl.classList.toggle('hidden', !chk.checked); if (p === 'BankTransfer') { ['bankName','bankAccountName','bankAccountNumber','bankInstructions'].forEach(f => {const el = getEl(f); if(el) el.value = s[f]||'';}); } else { const el = getEl(`${pL}${p === 'Esewa' ? 'MerchantCode' : 'PublicKey'}`); if(el) el.value = s[`${pL}${p === 'Esewa' ? 'MerchantCode' : 'PublicKey'}`]||''; } const base64Val = s[`${pL}QrBase64`]; const b64El = getEl(`${pL}QrBase64`); if(b64El) b64El.value = base64Val ||''; const prv = getEl(`${pL}QrPreview`); if(prv){ if(base64Val && base64Val.length > 100){ prv.src=base64Val;prv.classList.remove('hidden');}else{prv.src='https://via.placeholder.com/120?text=QR';prv.classList.add('hidden');}} }); }
-        function savePaymentSettings() { const s={enableCOD:getEl('enableCOD').checked}; ['Esewa','Khalti','BankTransfer'].forEach(p=>{const pL=p.toLowerCase();const chk=getEl(`enable${p}`); if(!chk) return; s[`enable${p}`]=chk.checked; const b64El = getEl(`${pL}QrBase64`); s[`${pL}QrBase64`]=chk.checked && b64El ? b64El.value:'';if(p==='BankTransfer'){['bankName','bankAccountName','bankAccountNumber','bankInstructions'].forEach(f=>{const el = getEl(f); s[f]=chk.checked && el ? el.value:'';});}else{ const el = getEl(`${pL}${p==='Esewa'?'MerchantCode':'PublicKey'}`); s[`${pL}${p==='Esewa'?'MerchantCode':'PublicKey'}`]=chk.checked && el ? el.value:'';}}); saveToLocalStorage(LS_ADMIN_PAYMENT_SETTINGS_KEY,s); }
-        if(paymentMethodsForm) paymentMethodsForm.addEventListener('submit', function(e) { e.preventDefault(); savePaymentSettings(); showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'paymentMethodsFormFeedback'); });
-        if (changeCredentialsForm) { changeCredentialsForm.addEventListener('submit', function(e) { e.preventDefault(); if(!isLoggedIn)return; const curUserIn = getEl('currentAdminUsername').value.trim(); const newUserIn = getEl('newAdminUsername').value.trim(); const curPassIn=getEl('currentAdminPassword').value; const newPassIn=getEl('newAdminPassword').value; const cNewPassIn=getEl('confirmNewAdminPassword').value; if (curUserIn !== simUsername || curPassIn !== simPassword) { alert("Incorrect current username or password."); return; } let changesMade = false; let passwordUpdated = false; if (newUserIn && newUserIn !== simUsername) { simUsername = newUserIn; saveToLocalStorage(LS_ADMIN_USERNAME_KEY, simUsername); changesMade = true; } if (newPassIn) { if(newPassIn.length<6){alert("New password must be at least 6 characters long.");return;} if(newPassIn!==cNewPassIn){alert("New passwords do not match.");return;} simPassword=newPassIn; saveToLocalStorage(LS_ADMIN_PASSWORD_KEY,simPassword); changesMade = true; passwordUpdated = true; } if(changesMade) { showSaveFeedback(e.target.querySelector('button[type="submit"]'), 'changeCredentialsFormFeedback', '✓ Credentials Updated!'); } else { alert("No changes were made to the credentials."); } setTimeout(() => {changeCredentialsForm.reset(); getEl('currentAdminUsername').value = simUsername; if(passwordUpdated) {alert("Password updated. For security, you will be logged out now."); btnLogout.click();} }, 500); });}
-
-        // General Initialization
-        if(refreshDataBtn) refreshDataBtn.addEventListener('click', () => { if(confirm("Refresh all data from LocalStorage? Unsaved changes in forms will be lost.")) { initializeAdminPanelData(); alert("Data refreshed from LocalStorage."); }});
-        function updateCurrencyDisplay(newCurrency) {
-            currentCurrency = newCurrency;
-            if (dashboardTotalSalesEl) dashboardTotalSalesEl.textContent = `${currentCurrency} ${currentTotalSales.toLocaleString()}`;
-            renderAdminProductTable(); 
-            loadAndDisplayShopOrders(); 
-        }
-        function initializeAdminPanelData() {
-            if(!isLoggedIn) { adminPanelContainer.classList.add('hidden'); loginScreen.classList.remove('hidden'); return; }
-            console.log("Initializing Admin Panel Data...");
-            loadAdminCategoriesFromLocalStorage(); loadAdminProductsFromLocalStorage();
-            loadShopCustomizationFromStorage(); loadShopUsersFromStorage();
-            loadAdminPostsFromLocalStorage(); // For new Post Manager
-            
-            renderAdminCategoryTable(); 
-            renderAdminProductTable(); 
-            renderUserTable(); 
-            renderAdminSupportContactTable();
-            renderManagedPostTable(); // For new Post Manager
-            
-            loadAndDisplayShopOrders(); 
-            
-            loadShopCustomizationSettings();
-            loadPaymentSettings(); 
-            loadMonetizationSettings();
-            
-            updateDashboardUserCount();
-            updateDashboardProductCount();
-
-            if (storeCurrencySet) updateCurrencyDisplay(storeCurrencySet.value);
-
-            const currentAdminUsernameField = getEl('currentAdminUsername');
-            if (currentAdminUsernameField) currentAdminUsernameField.value = simUsername;
-        }
-
-        // Modal backdrop click to close
-        querySelAll('.modal').forEach(modal => {
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) { 
-                    modal.classList.remove('active');
-                }
-            });
         });
 
-        attemptAutoLogin();
-    });
+        document.getElementById('save-order-status-btn').addEventListener('click', async (e) => {
+            const orderId = e.target.dataset.orderId;
+            const newStatus = document.getElementById('modal-order-status-select').value;
+            if (!orderId) return;
+
+            e.target.disabled = true;
+            e.target.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
+
+            try {
+                await update(ref(db, `orders/${orderId}`), { status: newStatus });
+                showToast("Order status updated successfully!", "success");
+                document.getElementById('order-details-modal').classList.remove('active');
+            } catch (err) {
+                showToast("Failed to update status. " + err.message, "error");
+            } finally {
+                e.target.disabled = false;
+                e.target.innerHTML = "Save Status";
+            }
+        });
+
+        // --- All other existing functions and listeners remain the same ---
+        // (Login, Logout, Product CRUD, Theme Toggle, Sidebar, etc.)
+        const loginBtn = document.getElementById('login-btn');
+        const loginBtnText = loginBtn.querySelector('.btn-text');
+        const loginBtnSpinner = loginBtn.querySelector('.bx-loader-alt');
+        const initAdminPanel = () => {
+            const productsRef = ref(db, 'products'); onValue(productsRef, (snapshot) => { renderProducts(snapshot.val()); updateDashboardStats(); });
+            const ordersRef = ref(db, 'orders'); onValue(ordersRef, (snapshot) => { renderOrders(snapshot.val()); updateDashboardStats(); });
+        };
+        const renderProducts = (data) => {
+            const tbody = document.getElementById('products-table-body');
+            if (!data) { showEmpty(tbody, 4, "No products found."); return; }
+            const productsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+            tbody.innerHTML = productsArray.map(p => `<tr><td><img src="${p.imageUrl || 'https://via.placeholder.com/60'}" width="60" height="60" style="object-fit:cover; border-radius:8px;"></td><td>${p.name || 'N/A'}</td><td>₹${Number(p.price || 0).toLocaleString('en-IN')}</td><td><button class="btn btn-sm btn-warning edit-product-btn" data-id="${p.id}"><i class='bx bxs-edit'></i> Edit</button> <button class="btn btn-sm btn-danger delete-product-btn" data-id="${p.id}"><i class='bx bxs-trash'></i> Delete</button></td></tr>`).join('');
+        };
+        const updateDashboardStats = () => {
+            onValue(ref(db, 'products'), (snapshot) => { document.getElementById('total-products').textContent = snapshot.exists() ? Object.keys(snapshot.val()).length : 0; }, { onlyOnce: true });
+            onValue(ref(db, 'orders'), (snapshot) => {
+                if (!snapshot.exists()) { document.getElementById('total-orders').textContent = 0; document.getElementById('total-revenue').textContent = '0'; return; }
+                const orders = snapshot.val(); const orderCount = Object.keys(orders).length;
+                const totalRevenue = Object.values(orders).filter(o => o.status !== 'Cancelled').reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
+                document.getElementById('total-orders').textContent = orderCount; document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString('en-IN');
+            }, { onlyOnce: true });
+        };
+        onAuthStateChanged(auth, (user) => {
+            if (user && ADMIN_UIDS.includes(user.uid)) { loginContainer.style.display = 'none'; adminPanel.style.display = 'flex'; initAdminPanel();
+            } else { loginContainer.style.display = 'flex'; adminPanel.style.display = 'none'; if (user) { signOut(auth); } }
+        });
+        loginBtn.addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value;
+            if (!email || !password) return showToast("Please enter email and password.", "error");
+            loginBtn.disabled = true; loginBtnText.textContent = "Logging In..."; loginBtnSpinner.style.display = 'inline-block';
+            try { const userCredential = await signInWithEmailAndPassword(auth, email, password); if (!ADMIN_UIDS.includes(userCredential.user.uid)) { showToast("You are not an admin.", "error"); signOut(auth); }
+            } catch (error) { showToast("Invalid credentials.", "error");
+            } finally { loginBtn.disabled = false; loginBtnText.textContent = "Login"; loginBtnSpinner.style.display = 'none'; }
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+        const productModal = document.getElementById('product-modal'); const productForm = document.getElementById('product-form'); const saveProductBtn = document.getElementById('save-product-btn');
+        document.getElementById('add-product-btn').addEventListener('click', () => { productForm.reset(); document.getElementById('product-id').value = ''; document.getElementById('product-modal-title').textContent = "Add New Product"; saveProductBtn.textContent = "Save Product"; productModal.classList.add('active'); });
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); const id = document.getElementById('product-id').value;
+            const productData = { name: document.getElementById('product-name').value.trim(), price: Number(document.getElementById('product-price').value), imageUrl: document.getElementById('product-image-url').value.trim(), updatedAt: serverTimestamp() };
+            saveProductBtn.disabled = true; saveProductBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
+            try { if (id) { await update(ref(db, `products/${id}`), productData); showToast('Product updated!', 'success'); } else { productData.createdAt = serverTimestamp(); await set(push(ref(db, 'products')), productData); showToast('Product added!', 'success'); } productModal.classList.remove('active');
+            } catch (err) { showToast('Error: ' + err.message, 'error'); } finally { saveProductBtn.disabled = false; saveProductBtn.innerHTML = id ? 'Save Changes' : 'Save Product'; }
+        });
+        document.getElementById('products-table-body').addEventListener('click', async (e) => {
+            const target = e.target.closest('button'); if (!target) return; const productId = target.dataset.id; if (!productId) return;
+            if (target.classList.contains('edit-product-btn')) { onValue(ref(db, `products/${productId}`), (snapshot) => { if (snapshot.exists()) { const data = snapshot.val(); document.getElementById('product-id').value = productId; document.getElementById('product-name').value = data.name; document.getElementById('product-price').value = data.price; document.getElementById('product-image-url').value = data.imageUrl; document.getElementById('product-modal-title').textContent = "Edit Product"; saveProductBtn.textContent = "Save Changes"; productModal.classList.add('active'); } }, { once: true }); }
+            if (target.classList.contains('delete-product-btn')) { if (confirm('Are you sure?')) { try { await remove(ref(db, `products/${productId}`)); showToast('Product deleted.', 'success'); } catch (err) { showToast('Error deleting.', 'error'); } } }
+        });
+        document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal-overlay').classList.remove('active')));
+        const sidebar = document.querySelector('.sidebar'); const sidebarOverlay = document.querySelector('.sidebar-overlay');
+        document.getElementById('menu-toggle').addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
+        sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
+        document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); document.querySelector('.nav-link.active')?.classList.remove('active'); link.classList.add('active'); document.querySelector('.view.active')?.classList.remove('active'); document.getElementById(link.dataset.view).classList.add('active'); if (window.innerWidth <= 992) { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); } }); });
+        const themeToggle = document.getElementById('theme-toggle'); const applyTheme = (theme) => { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('theme', theme); themeToggle.innerHTML = theme === 'dark' ? "<i class='bx bxs-moon'></i>" : "<i class='bx bx-sun'></i>"; };
+        themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); });
+        applyTheme(localStorage.getItem('theme') || 'light');
     </script>
 </body>
 </html>
