@@ -35,6 +35,7 @@
         .btn-warning { background-color: var(--warning-color); color: white; }
         .btn-danger { background-color: var(--danger-color); color: white; }
         .btn-secondary { background-color: var(--hover-color); color: var(--text-color); border: 1px solid var(--border-color); }
+        .btn-success { background-color: var(--success-color); color: white; }
         .btn-auto { width: auto; }
         #admin-panel { display: none; flex-direction: row; min-height: 100vh; }
         .sidebar { width: 250px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 15px; position: fixed; top: 0; left: 0; height: 100vh; z-index: 1000; transition: transform 0.3s ease-in-out; }
@@ -58,11 +59,16 @@
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .page-header h1 { font-size: 28px; }
         .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color); margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         .table-container { border: 1px solid var(--border-color); border-radius: 12px; overflow-x: auto; background-color: var(--card-bg); }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 15px 20px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        td .btn { margin-right: 5px; }
         tbody tr:last-child td { border-bottom: none; }
+        .status-pending { background-color: #fffbe6; color: #d48806; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        .status-shipped { background-color: #e6f7ff; color: #1890ff; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        .status-completed { background-color: #f6ffed; color: #52c41a; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        .status-cancelled { background-color: #fff1f0; color: #f5222d; padding: 4px 10px; border-radius: 20px; font-weight: 500; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1001; display: none; justify-content: center; align-items: center; padding: 15px; }
         .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
         .modal-container { background: var(--card-bg); padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
@@ -73,12 +79,10 @@
         .toast.success { background-color: var(--success-color); }
         .toast.error { background-color: var(--danger-color); }
         @keyframes slideInToast { to { opacity: 1; transform: translateX(0); } }
-        
-        /* NEW STYLES for Order Details */
         .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .detail-item { background-color: var(--bg-color); padding: 10px 15px; border-radius: 8px; }
         .detail-item strong { display: block; color: var(--text-muted); font-size: 12px; margin-bottom: 4px; }
-        .detail-item span { font-weight: 500; }
+        .detail-item span { font-weight: 500; word-break: break-all; }
         #modal-order-items .item { display: flex; align-items: center; gap: 15px; padding: 10px; border-bottom: 1px solid var(--border-color); }
         #modal-order-items .item:last-child { border-bottom: none; }
         #modal-order-items img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
@@ -86,119 +90,44 @@
     </style>
 </head>
 <body>
-
-    <div id="login-container">
-        <!-- Login Form (No changes here) -->
-        <div class="login-box">
-            <i class='bx bxl-firebase' style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i>
-            <h2>Admin Panel Login</h2>
-            <p style="color: var(--text-muted); margin: 10px 0 30px;">Please login to continue.</p>
-            <div class="form-group"><input type="email" id="login-email" class="form-input" placeholder="Email Address" required></div>
-            <div class="form-group"><input type="password" id="login-password" class="form-input" placeholder="Password" required></div>
-            <button id="login-btn" class="btn btn-primary"><span class="btn-text">Login</span><i class='bx bx-loader-alt bx-spin' style="display: none;"></i></button>
-        </div>
-    </div>
-
+    <div id="login-container"><div class="login-box"><i class='bx bxl-firebase' style="font-size: 48px; color: var(--primary-color); margin-bottom: 15px;"></i><h2>Admin Panel Login</h2><p style="color: var(--text-muted); margin: 10px 0 30px;">Please login to continue.</p><div class="form-group"><input type="email" id="login-email" class="form-input" placeholder="Email Address" required></div><div class="form-group"><input type="password" id="login-password" class="form-input" placeholder="Password" required></div><button id="login-btn" class="btn btn-primary"><span class="btn-text">Login</span><i class='bx bx-loader-alt bx-spin' style="display: none;"></i></button></div></div>
+    
     <div id="admin-panel">
-        <!-- Sidebar and Main Content (No changes in structure) -->
-        <aside class="sidebar">
-            <div class="logo">AtoZ Admin</div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="#" class="nav-link active" data-view="dashboard-view"><i class='bx bxs-dashboard'></i> Dashboard</a></li>
-                    <li><a href="#" class="nav-link" data-view="products-view"><i class='bx bxs-package'></i> Products</a></li>
-                    <li><a href="#" class="nav-link" data-view="orders-view"><i class='bx bxs-cart-alt'></i> Orders</a></li>
-                </ul>
-            </nav>
-            <button id="logout-btn" class="btn btn-danger btn-auto"><i class='bx bx-log-out'></i> Logout</button>
-        </aside>
+        <aside class="sidebar"><div class="logo">AtoZ Admin</div><nav class="sidebar-nav"><ul>
+            <li><a href="#" class="nav-link active" data-view="dashboard-view"><i class='bx bxs-dashboard'></i> Dashboard</a></li>
+            <li><a href="#" class="nav-link" data-view="products-view"><i class='bx bxs-package'></i> Products</a></li>
+            <li><a href="#" class="nav-link" data-view="orders-view"><i class='bx bxs-cart-alt'></i> Orders</a></li>
+            <li><a href="#" class="nav-link" data-view="users-view"><i class='bx bxs-group'></i> Users</a></li>
+            <li><a href="#" class="nav-link" data-view="withdrawals-view"><i class='bx bxs-bank'></i> Withdrawals</a></li>
+            <li><a href="#" class="nav-link" data-view="channel-promotion-view"><i class='bx bxl-youtube'></i> Channel Promotion</a></li>
+        </ul></nav><button id="logout-btn" class="btn btn-danger btn-auto"><i class='bx bx-log-out'></i> Logout</button></aside>
+        
         <div class="sidebar-overlay"></div>
+
         <main>
-            <header class="main-header">
-                <button id="menu-toggle" class="menu-toggle"><i class='bx bx-menu'></i></button>
-                <button id="theme-toggle" title="Toggle Theme"><i class='bx bx-sun'></i></button>
-            </header>
-            <section id="dashboard-view" class="view active">
-                <div class="page-header"><h1>Dashboard</h1></div>
-                <div class="stats-grid">
-                    <div class="card"><h3><span id="total-products">0</span></h3><p>Total Products</p></div>
-                    <div class="card"><h3><span id="total-orders">0</span></h3><p>Total Orders</p></div>
-                    <div class="card"><h3>₹ <span id="total-revenue">0</span></h3><p>Total Revenue</p></div>
-                </div>
-            </section>
-            <section id="products-view" class="view">
-                <div class="page-header"><h1>Products</h1><button id="add-product-btn" class="btn btn-primary btn-auto"><i class='bx bx-plus'></i>Add New Product</button></div>
-                <div class="table-container"><table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Actions</th></tr></thead><tbody id="products-table-body"></tbody></table></div>
-            </section>
-            <section id="orders-view" class="view">
-                 <div class="page-header"><h1>Orders</h1></div>
-                 <!-- MODIFIED: Added 'Actions' column to the orders table -->
-                 <div class="table-container"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="orders-table-body"></tbody></table></div>
-            </section>
+            <header class="main-header"><button id="menu-toggle" class="menu-toggle"><i class='bx bx-menu'></i></button><button id="theme-toggle" title="Toggle Theme"><i class='bx bx-sun'></i></button></header>
+            
+            <section id="dashboard-view" class="view active"><div class="page-header"><h1>Dashboard</h1></div><div class="stats-grid"><div class="card"><h3><span id="total-products">0</span></h3><p>Total Products</p></div><div class="card"><h3><span id="total-orders">0</span></h3><p>Total Orders</p></div><div class="card"><h3>₹ <span id="total-revenue">0</span></h3><p>Total Revenue</p></div><div class="card"><h3><span id="total-users">0</span></h3><p>Total Users</p></div></div></section>
+            <section id="products-view" class="view"><div class="page-header"><h1>Products</h1><button id="add-product-btn" class="btn btn-primary btn-auto"><i class='bx bx-plus'></i>Add New Product</button></div><div class="table-container"><table><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Actions</th></tr></thead><tbody id="products-table-body"></tbody></table></div></section>
+            <section id="orders-view" class="view"><div class="page-header"><h1>Orders</h1></div><div class="table-container"><table><thead><tr><th>Order ID</th><th>Customer Name</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="orders-table-body"></tbody></table></div></section>
+            <section id="users-view" class="view"><div class="page-header"><h1>Users</h1></div><div class="table-container"><table><thead><tr><th>Name</th><th>Email</th><th>Referral Code</th><th>Earnings (NPR)</th><th>Actions</th></tr></thead><tbody id="users-table-body"></tbody></table></div></section>
+            <section id="withdrawals-view" class="view"><div class="page-header"><h1>Withdrawal Requests</h1></div><div class="table-container"><table><thead><tr><th>User Name</th><th>Amount (NPR)</th><th>Requested At</th><th>Status</th><th>Actions</th></tr></thead><tbody id="withdrawals-table-body"></tbody></table></div></section>
+            
+            <section id="channel-promotion-view" class="view"><div class="page-header"><h1>Channel Promotion</h1><button id="add-channel-btn" class="btn btn-primary btn-auto"><i class='bx bx-plus'></i>Add New Channel</button></div><div class="table-container"><table><thead><tr><th>Channel Name</th><th>URL</th><th>Actions</th></tr></thead><tbody id="channel-promotion-table-body"></tbody></table></div></section>
         </main>
     </div>
 
-    <!-- Product Modal (No changes here) -->
-    <div id="product-modal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header"><h3 id="product-modal-title">Add Product</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div>
-            <form id="product-form">
-                <input type="hidden" id="product-id">
-                <div class="form-group"><label for="product-name">Product Name</label><input type="text" id="product-name" class="form-input" required></div>
-                <div class="form-group"><label for="product-price">Price (₹)</label><input type="number" id="product-price" class="form-input" required></div>
-                <div class="form-group"><label for="product-image-url">Image URL</label><input type="text" id="product-image-url" class="form-input" placeholder="e.g., https://i.imgur.com/..." required></div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary modal-close" type="button">Cancel</button>
-                    <button id="save-product-btn" type="submit" class="btn btn-primary">Save Product</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div id="product-modal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="product-modal-title">Add Product</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div><form id="product-form"><input type="hidden" id="product-id"><div class="form-group"><label for="product-name">Product Name</label><input type="text" id="product-name" class="form-input" required></div><div class="form-group"><label for="product-price">Price (₹)</label><input type="number" id="product-price" class="form-input" required></div><div class="form-group"><label for="product-image-url">Image URL</label><input type="text" id="product-image-url" class="form-input" placeholder="e.g., https://i.imgur.com/..." required></div><div class="modal-footer"><button class="btn btn-secondary modal-close" type="button">Cancel</button><button id="save-product-btn" type="submit" class="btn btn-primary">Save Product</button></div></form></div></div>
+    <div id="order-details-modal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="order-modal-title">Order Details</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div><div class="details-grid"><div class="detail-item"><strong>Order ID</strong> <span id="modal-order-id"></span></div><div class="detail-item"><strong>Order Date</strong> <span id="modal-order-date"></span></div><div class="detail-item"><strong>Customer Name</strong> <span id="modal-customer-name"></span></div><div class="detail-item"><strong>Customer Phone</strong> <span id="modal-customer-phone"></span></div><div class="detail-item" style="grid-column: 1 / -1;"><strong>Shipping Address</strong> <span id="modal-customer-address"></span></div><div class="detail-item"><strong>Payment Method</strong> <span id="modal-payment-method"></span></div><div class="detail-item"><strong>Transaction ID</strong> <span id="modal-transaction-id"></span></div><div class="detail-item" style="background-color: var(--primary-color-light);"><strong>Total Amount</strong> <span id="modal-total-amount" style="color: var(--primary-color); font-weight: 700;"></span></div></div><hr class="modal-divider"><h4>Ordered Items</h4><div id="modal-order-items" style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 8px;"></div><hr class="modal-divider"><div class="form-group"><label for="modal-order-status-select"><strong>Update Order Status</strong></label><select id="modal-order-status-select" class="form-select"><option value="pending">Pending</option><option value="shipped">Shipped</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div><div class="modal-footer"><button class="btn btn-secondary modal-close" type="button">Close</button><button id="save-order-status-btn" type="button" class="btn btn-primary">Save Status</button></div></div></div>
+    <div id="user-details-modal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3>User & Withdrawal Details</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div><div id="user-details-content"></div><div class="modal-footer"><button class="btn btn-secondary modal-close" type="button">Close</button></div></div></div>
     
-    <!-- NEW: Order Details Modal -->
-    <div id="order-details-modal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-header"><h3 id="order-modal-title">Order Details</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div>
-            
-            <div class="details-grid">
-                <div class="detail-item"><strong>Order ID</strong> <span id="modal-order-id"></span></div>
-                <div class="detail-item"><strong>Order Date</strong> <span id="modal-order-date"></span></div>
-                <div class="detail-item"><strong>Customer Name</strong> <span id="modal-customer-name"></span></div>
-                <div class="detail-item"><strong>Customer Phone</strong> <span id="modal-customer-phone"></span></div>
-                <div class="detail-item" style="grid-column: 1 / -1;"><strong>Shipping Address</strong> <span id="modal-customer-address"></span></div>
-                <div class="detail-item"><strong>Payment Method</strong> <span id="modal-payment-method"></span></div>
-                <div class="detail-item"><strong>Transaction ID</strong> <span id="modal-transaction-id"></span></div>
-                <div class="detail-item" style="background-color: var(--primary-color-light);"><strong>Total Amount</strong> <span id="modal-total-amount" style="color: var(--primary-color); font-weight: 700;"></span></div>
-            </div>
-
-            <hr class="modal-divider">
-
-            <h4>Ordered Items</h4>
-            <div id="modal-order-items" style="margin-top: 15px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
-            
-            <hr class="modal-divider">
-
-            <div class="form-group">
-                <label for="modal-order-status-select"><strong>Update Order Status</strong></label>
-                <select id="modal-order-status-select" class="form-select">
-                    <option value="pending">Pending</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                </select>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close" type="button">Close</button>
-                <button id="save-order-status-btn" type="button" class="btn btn-primary">Save Status</button>
-            </div>
-        </div>
-    </div>
+    <div id="channel-modal" class="modal-overlay"><div class="modal-container"><div class="modal-header"><h3 id="channel-modal-title">Add Channel</h3><button class="modal-close btn-auto btn-secondary" type="button" style="border: none; background: none; font-size: 24px;"><i class='bx bx-x'></i></button></div><form id="channel-form"><input type="hidden" id="channel-id"><div class="form-group"><label for="channel-name">Channel Name</label><input type="text" id="channel-name" class="form-input" required></div><div class="form-group"><label for="channel-url">Channel URL</label><input type="url" id="channel-url" class="form-input" placeholder="https://youtube.com/@..." required></div><div class="modal-footer"><button class="btn btn-secondary modal-close" type="button">Cancel</button><button id="save-channel-btn" type="submit" class="btn btn-primary">Save Channel</button></div></form></div></div>
 
     <div id="toast-notification"></div>
 
     <script type="module">
-        // Firebase Config and Imports (No Changes)
+        // Firebase Config and Imports
         const firebaseConfig = {
             apiKey: "AIzaSyBJVsgK-5lfNORLjPDf1k98z-DfzVy-BkQ",
             authDomain: "r-commerce-31882.firebaseapp.com",
@@ -211,179 +140,66 @@
         };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-auth.js";
-        import { getDatabase, ref, onValue, set, push, remove, update, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
+        import { getDatabase, ref, onValue, remove, update, get, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.7/firebase-database.js";
+        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
         const ADMIN_UIDS = ['IchlEMXcd6QOhOxcyusqlYSqMh42', '0i05Vq5GqycBjZ9ROlhpJUhyY7i2'];
+        const COMMISSION_RATE = 0.05;
+        let allUsersData = {};
+        let allOrdersData = {};
+        let allChannelPromotions = {};
 
-        // Helper Functions (No Changes)
-        const loginContainer = document.getElementById('login-container');
-        const adminPanel = document.getElementById('admin-panel');
-        const showToast = (message, type = 'success') => {
-            const container = document.getElementById('toast-notification');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class='bx ${type === 'success' ? 'bxs-check-circle' : 'bxs-x-circle'}'></i> ${message}`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove() }, 4000);
-        };
+        // Helper Functions
+        const showToast = (message, type = 'success') => { const container = document.getElementById('toast-notification'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<i class='bx ${type === 'success' ? 'bxs-check-circle' : 'bxs-x-circle'}'></i> ${message}`; container.appendChild(toast); setTimeout(() => { toast.remove() }, 4000); };
         const showEmpty = (tbody, colspan, message) => { tbody.innerHTML = `<tr><td colspan="${colspan}" style="text-align:center; padding: 40px;">${message}</td></tr>`; };
 
-        // Render Orders Function - MODIFIED
-        const renderOrders = (data) => {
-            const tbody = document.getElementById('orders-table-body');
-            if (!data) {
-                showEmpty(tbody, 6, "No orders have been placed yet.");
-                return;
-            }
-            const ordersArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
-            tbody.innerHTML = ordersArray.map(o => `
-                <tr>
-                    <td>#${o.id.slice(-6).toUpperCase()}</td>
-                    <td>${o.shippingInfo?.name || 'N/A'}</td>
-                    <td>₹${Number(o.totalAmount || 0).toLocaleString('en-IN')}</td>
-                    <td><span class="status-${(o.status || 'pending').toLowerCase()}">${o.status || 'Pending'}</span></td>
-                    <td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A'}</td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary view-order-details-btn" data-id="${o.id}">Details</button>
-                    </td>
-                </tr>`).join('');
-        };
+        // RENDER FUNCTIONS
+        const renderProducts = (data) => { const tbody = document.getElementById('products-table-body'); if (!data) { showEmpty(tbody, 4, "No products found."); return; } const productsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse(); tbody.innerHTML = productsArray.map(p => `<tr><td><img src="${p.imageUrl || 'https://via.placeholder.com/60'}" width="60" height="60" style="object-fit:cover; border-radius:8px;"></td><td>${p.name || 'N/A'}</td><td>₹${Number(p.price || 0).toLocaleString('en-IN')}</td><td><button class="btn btn-sm btn-warning edit-product-btn" data-id="${p.id}"><i class='bx bxs-edit'></i> Edit</button> <button class="btn btn-sm btn-danger delete-product-btn" data-id="${p.id}"><i class='bx bxs-trash'></i> Delete</button></td></tr>`).join(''); };
+        const renderOrders = (data) => { allOrdersData = data; const tbody = document.getElementById('orders-table-body'); if (!data) { showEmpty(tbody, 6, "No orders have been placed yet."); return; } const ordersArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse(); tbody.innerHTML = ordersArray.map(o => `<tr><td>#${o.id.slice(-6).toUpperCase()}</td><td>${o.shippingInfo?.name || 'N/A'}</td><td>₹${Number(o.totalAmount || 0).toLocaleString('en-IN')}</td><td><span class="status-${(o.status || 'pending').toLowerCase()}">${o.status || 'Pending'}</span></td><td>${o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A'}</td><td><button class="btn btn-sm btn-secondary view-order-details-btn" data-id="${o.id}">Details</button></td></tr>`).join(''); };
+        const renderUsers = (data) => { allUsersData = data; const tbody = document.getElementById('users-table-body'); if (!data) { showEmpty(tbody, 5, "No users found."); return; } const usersArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse(); tbody.innerHTML = usersArray.map(u => `<tr><td>${u.name || 'N/A'}</td><td>${u.email}</td><td>${u.referralCode || 'N/A'}</td><td>NPR ${(u.earnings?.balance || 0).toLocaleString('en-NP')}</td><td><button class="btn btn-sm btn-secondary view-user-details-btn" data-id="${u.id}">Details</button></td></tr>`).join(''); };
+        const renderWithdrawals = (data) => { const tbody = document.getElementById('withdrawals-table-body'); if (!data) { showEmpty(tbody, 5, "No withdrawal requests found."); return; } const requests = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse(); tbody.innerHTML = requests.map(r => `<tr><td>${r.userName}</td><td>NPR ${r.amount.toLocaleString('en-NP')}</td><td>${new Date(r.requestedAt).toLocaleString()}</td><td><span class="status-${r.status}">${r.status}</span></td><td>${r.status === 'pending' ? `<button class="btn btn-sm btn-success mark-paid-btn" data-id="${r.id}" data-user-id="${r.userId}" data-amount="${r.amount}"><i class='bx bx-check'></i> Mark Paid</button>` : 'Processed'}</td></tr>`).join(''); };
+        const renderChannelPromotions = (data) => { allChannelPromotions = data; const tbody = document.getElementById('channel-promotion-table-body'); if (!data) { showEmpty(tbody, 3, "No channels added yet."); return; } const channels = Object.keys(data).map(key => ({ id: key, ...data[key] })); tbody.innerHTML = channels.map(c => `<tr><td>${c.channelName}</td><td><a href="${c.channelUrl}" target="_blank">${c.channelUrl}</a></td><td><button class="btn btn-sm btn-warning edit-channel-btn" data-id="${c.id}"><i class='bx bxs-edit'></i> Edit</button> <button class="btn btn-sm btn-danger delete-channel-btn" data-id="${c.id}"><i class='bx bxs-trash'></i> Delete</button></td></tr>`).join(''); };
 
-        // NEW: Function to populate and show the Order Details Modal
-        const showOrderDetails = (orderId) => {
-            const orderRef = ref(db, `orders/${orderId}`);
-            onValue(orderRef, (snapshot) => {
-                if (!snapshot.exists()) {
-                    showToast("Order not found.", "error");
-                    return;
-                }
-                const order = snapshot.val();
-                
-                // Populate modal fields
-                document.getElementById('modal-order-id').textContent = `#${orderId.slice(-6).toUpperCase()}`;
-                document.getElementById('modal-order-date').textContent = new Date(order.createdAt).toLocaleString();
-                document.getElementById('modal-customer-name').textContent = order.shippingInfo.name;
-                document.getElementById('modal-customer-phone').textContent = order.shippingInfo.phone;
-                document.getElementById('modal-customer-address').textContent = order.shippingInfo.address;
-                document.getElementById('modal-payment-method').textContent = order.paymentInfo.method;
-                document.getElementById('modal-transaction-id').textContent = order.paymentInfo.transactionId || 'N/A';
-                document.getElementById('modal-total-amount').textContent = `₹${order.totalAmount.toLocaleString('en-IN')}`;
-
-                // Populate ordered items
-                const itemsContainer = document.getElementById('modal-order-items');
-                itemsContainer.innerHTML = order.items.map(item => `
-                    <div class="item">
-                        <img src="${item.imageUrl}" alt="${item.name}">
-                        <div style="flex-grow: 1;">
-                            <strong>${item.name}</strong>
-                            <div>Quantity: ${item.quantity}</div>
-                        </div>
-                        <div>₹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
-                    </div>
-                `).join('');
-
-                // Set current status
-                const statusSelect = document.getElementById('modal-order-status-select');
-                statusSelect.value = order.status;
-
-                // Store order ID on save button
-                document.getElementById('save-order-status-btn').dataset.orderId = orderId;
-
-                // Show the modal
-                document.getElementById('order-details-modal').classList.add('active');
-
-            }, { onlyOnce: true });
-        };
+        // MODAL FUNCTIONS
+        const showOrderDetails = (orderId) => { const order = allOrdersData[orderId]; if (!order) { showToast("Order not found.", "error"); return; } document.getElementById('modal-order-id').textContent = `#${orderId.slice(-6).toUpperCase()}`; document.getElementById('modal-order-date').textContent = new Date(order.createdAt).toLocaleString(); document.getElementById('modal-customer-name').textContent = order.shippingInfo.name; document.getElementById('modal-customer-phone').textContent = order.shippingInfo.phone; document.getElementById('modal-customer-address').textContent = order.shippingInfo.address; document.getElementById('modal-payment-method').textContent = order.paymentInfo.method; document.getElementById('modal-transaction-id').textContent = order.paymentInfo.transactionId || 'N/A'; document.getElementById('modal-total-amount').textContent = `₹${order.totalAmount.toLocaleString('en-IN')}`; document.getElementById('modal-order-items').innerHTML = order.items.map(item => `<div class="item"><img src="${item.imageUrl}" alt="${item.name}"><div style="flex-grow: 1;"><strong>${item.name}</strong><div>Quantity: ${item.quantity}</div></div><div>₹${(item.price * item.quantity).toLocaleString('en-IN')}</div></div>`).join(''); document.getElementById('modal-order-status-select').value = order.status; document.getElementById('save-order-status-btn').dataset.orderId = orderId; document.getElementById('order-details-modal').classList.add('active'); };
+        const showUserDetails = (userId) => { const user = allUsersData[userId]; if (!user) { showToast("User not found.", "error"); return; } const details = user.withdrawalDetails; const content = `<div class="details-grid"><div class="detail-item"><strong>Name</strong> <span>${user.name}</span></div><div class="detail-item"><strong>Email</strong> <span>${user.email}</span></div><div class="detail-item"><strong>Referral Code</strong> <span>${user.referralCode}</span></div><div class="detail-item" style="background-color: var(--primary-color-light); color: var(--primary-color);"><strong>Current Earnings</strong> <span style="font-weight: 700;">NPR ${(user.earnings?.balance || 0).toLocaleString('en-NP')}</span></div></div><hr class="modal-divider"><h4>Withdrawal Information</h4>${details ? `<div class="details-grid" style="margin-top: 15px;"><div class="detail-item"><strong>Account Holder</strong> <span>${details.bankAccountHolderName || 'N/A'}</span></div><div class="detail-item"><strong>Bank Name</strong> <span>${details.bankName || 'N/A'}</span></div><div class="detail-item"><strong>Account No.</strong> <span>${details.bankAccountNumber || 'N/A'}</span></div><div class="detail-item"><strong>IFSC Code</strong> <span>${details.ifscCode || 'N/A'}</span></div></div>` : `<p style="color: var(--text-muted); margin-top: 10px;">User has not provided withdrawal details.</p>`}`; document.getElementById('user-details-content').innerHTML = content; document.getElementById('user-details-modal').classList.add('active'); };
         
-        // General Event Listeners
-        document.getElementById('orders-table-body').addEventListener('click', (e) => {
-            if (e.target.classList.contains('view-order-details-btn')) {
-                const orderId = e.target.dataset.id;
-                showOrderDetails(orderId);
-            }
-        });
+        // --- COMMISSION LOGIC ---
+        const processReferralCommission = async (orderId, orderData) => { const customerId = orderData.userId; const customerSnap = await get(ref(db, `users/${customerId}`)); if (!customerSnap.exists()) return; const customerData = customerSnap.val(); if (customerData.referredBy && !customerData.commissionPaid) { const referrerId = customerData.referredBy; const referrerSnap = await get(ref(db, `users/${referrerId}`)); if (referrerSnap.exists()) { const referrerData = referrerSnap.val(); const commissionAmount = Math.round(orderData.totalAmount * COMMISSION_RATE); const newBalance = (referrerData.earnings?.balance || 0) + commissionAmount; await update(ref(db, `users/${referrerId}/earnings`), { balance: newBalance }); await push(ref(db, `users/${referrerId}/earnings/history`), { amount: commissionAmount, type: 'Order Commission', details: `From order #${orderId.slice(-6).toUpperCase()}`, timestamp: serverTimestamp() }); await update(ref(db, `users/${customerId}`), { commissionPaid: true }); showToast(`NPR ${commissionAmount} commission awarded to referrer!`, 'success'); } } };
 
-        document.getElementById('save-order-status-btn').addEventListener('click', async (e) => {
-            const orderId = e.target.dataset.orderId;
-            const newStatus = document.getElementById('modal-order-status-select').value;
-            if (!orderId) return;
-
-            e.target.disabled = true;
-            e.target.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
-
-            try {
-                await update(ref(db, `orders/${orderId}`), { status: newStatus });
-                showToast("Order status updated successfully!", "success");
-                document.getElementById('order-details-modal').classList.remove('active');
-            } catch (err) {
-                showToast("Failed to update status. " + err.message, "error");
-            } finally {
-                e.target.disabled = false;
-                e.target.innerHTML = "Save Status";
-            }
-        });
-
-        // --- All other existing functions and listeners remain the same ---
-        // (Login, Logout, Product CRUD, Theme Toggle, Sidebar, etc.)
-        const loginBtn = document.getElementById('login-btn');
-        const loginBtnText = loginBtn.querySelector('.btn-text');
-        const loginBtnSpinner = loginBtn.querySelector('.bx-loader-alt');
-        const initAdminPanel = () => {
-            const productsRef = ref(db, 'products'); onValue(productsRef, (snapshot) => { renderProducts(snapshot.val()); updateDashboardStats(); });
-            const ordersRef = ref(db, 'orders'); onValue(ordersRef, (snapshot) => { renderOrders(snapshot.val()); updateDashboardStats(); });
-        };
-        const renderProducts = (data) => {
-            const tbody = document.getElementById('products-table-body');
-            if (!data) { showEmpty(tbody, 4, "No products found."); return; }
-            const productsArray = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
-            tbody.innerHTML = productsArray.map(p => `<tr><td><img src="${p.imageUrl || 'https://via.placeholder.com/60'}" width="60" height="60" style="object-fit:cover; border-radius:8px;"></td><td>${p.name || 'N/A'}</td><td>₹${Number(p.price || 0).toLocaleString('en-IN')}</td><td><button class="btn btn-sm btn-warning edit-product-btn" data-id="${p.id}"><i class='bx bxs-edit'></i> Edit</button> <button class="btn btn-sm btn-danger delete-product-btn" data-id="${p.id}"><i class='bx bxs-trash'></i> Delete</button></td></tr>`).join('');
-        };
-        const updateDashboardStats = () => {
-            onValue(ref(db, 'products'), (snapshot) => { document.getElementById('total-products').textContent = snapshot.exists() ? Object.keys(snapshot.val()).length : 0; }, { onlyOnce: true });
-            onValue(ref(db, 'orders'), (snapshot) => {
-                if (!snapshot.exists()) { document.getElementById('total-orders').textContent = 0; document.getElementById('total-revenue').textContent = '0'; return; }
-                const orders = snapshot.val(); const orderCount = Object.keys(orders).length;
-                const totalRevenue = Object.values(orders).filter(o => o.status !== 'Cancelled').reduce((sum, o) => sum + Number(o.totalAmount || 0), 0);
-                document.getElementById('total-orders').textContent = orderCount; document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString('en-IN');
-            }, { onlyOnce: true });
-        };
-        onAuthStateChanged(auth, (user) => {
-            if (user && ADMIN_UIDS.includes(user.uid)) { loginContainer.style.display = 'none'; adminPanel.style.display = 'flex'; initAdminPanel();
-            } else { loginContainer.style.display = 'flex'; adminPanel.style.display = 'none'; if (user) { signOut(auth); } }
-        });
-        loginBtn.addEventListener('click', async () => {
-            const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value;
-            if (!email || !password) return showToast("Please enter email and password.", "error");
-            loginBtn.disabled = true; loginBtnText.textContent = "Logging In..."; loginBtnSpinner.style.display = 'inline-block';
-            try { const userCredential = await signInWithEmailAndPassword(auth, email, password); if (!ADMIN_UIDS.includes(userCredential.user.uid)) { showToast("You are not an admin.", "error"); signOut(auth); }
-            } catch (error) { showToast("Invalid credentials.", "error");
-            } finally { loginBtn.disabled = false; loginBtnText.textContent = "Login"; loginBtnSpinner.style.display = 'none'; }
-        });
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
-        const productModal = document.getElementById('product-modal'); const productForm = document.getElementById('product-form'); const saveProductBtn = document.getElementById('save-product-btn');
-        document.getElementById('add-product-btn').addEventListener('click', () => { productForm.reset(); document.getElementById('product-id').value = ''; document.getElementById('product-modal-title').textContent = "Add New Product"; saveProductBtn.textContent = "Save Product"; productModal.classList.add('active'); });
-        productForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); const id = document.getElementById('product-id').value;
-            const productData = { name: document.getElementById('product-name').value.trim(), price: Number(document.getElementById('product-price').value), imageUrl: document.getElementById('product-image-url').value.trim(), updatedAt: serverTimestamp() };
-            saveProductBtn.disabled = true; saveProductBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving...";
-            try { if (id) { await update(ref(db, `products/${id}`), productData); showToast('Product updated!', 'success'); } else { productData.createdAt = serverTimestamp(); await set(push(ref(db, 'products')), productData); showToast('Product added!', 'success'); } productModal.classList.remove('active');
-            } catch (err) { showToast('Error: ' + err.message, 'error'); } finally { saveProductBtn.disabled = false; saveProductBtn.innerHTML = id ? 'Save Changes' : 'Save Product'; }
-        });
-        document.getElementById('products-table-body').addEventListener('click', async (e) => {
-            const target = e.target.closest('button'); if (!target) return; const productId = target.dataset.id; if (!productId) return;
-            if (target.classList.contains('edit-product-btn')) { onValue(ref(db, `products/${productId}`), (snapshot) => { if (snapshot.exists()) { const data = snapshot.val(); document.getElementById('product-id').value = productId; document.getElementById('product-name').value = data.name; document.getElementById('product-price').value = data.price; document.getElementById('product-image-url').value = data.imageUrl; document.getElementById('product-modal-title').textContent = "Edit Product"; saveProductBtn.textContent = "Save Changes"; productModal.classList.add('active'); } }, { once: true }); }
-            if (target.classList.contains('delete-product-btn')) { if (confirm('Are you sure?')) { try { await remove(ref(db, `products/${productId}`)); showToast('Product deleted.', 'success'); } catch (err) { showToast('Error deleting.', 'error'); } } }
-        });
+        // EVENT LISTENERS
+        document.getElementById('users-table-body').addEventListener('click', (e) => { const target = e.target.closest('button'); if (!target) return; if (target.classList.contains('view-user-details-btn')) { showUserDetails(target.dataset.id); }});
+        document.getElementById('orders-table-body').addEventListener('click', (e) => { if(e.target.closest('.view-order-details-btn')) showOrderDetails(e.target.closest('.view-order-details-btn').dataset.id); });
+        document.getElementById('save-order-status-btn').addEventListener('click', async (e) => { const btn = e.target; const orderId = btn.dataset.orderId; const newStatus = document.getElementById('modal-order-status-select').value; const oldStatus = allOrdersData[orderId]?.status; if (!orderId || newStatus === oldStatus) return; btn.disabled = true; btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving..."; try { await update(ref(db, `orders/${orderId}`), { status: newStatus }); showToast("Order status updated!", "success"); if (newStatus === 'completed' && oldStatus !== 'completed') { await processReferralCommission(orderId, allOrdersData[orderId]); } document.getElementById('order-details-modal').classList.remove('active'); } catch (err) { showToast("Failed to update status. " + err.message, "error"); } finally { btn.disabled = false; btn.innerHTML = "Save Status"; } });
+        document.getElementById('withdrawals-table-body').addEventListener('click', async (e) => { const btn = e.target.closest('.mark-paid-btn'); if (!btn) return; if (!confirm("Are you sure you have paid this user? This will mark the request as 'paid' and reset their earnings balance to 0.")) return; const reqId = btn.dataset.id; const userId = btn.dataset.userId; const amount = parseFloat(btn.dataset.amount); btn.disabled = true; btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>"; try { const updates = {}; updates[`withdrawals/${reqId}/status`] = 'paid'; updates[`users/${userId}/earnings/balance`] = 0; await update(ref(db), updates); await push(ref(db, `users/${userId}/earnings/history`), { amount: -amount, type: 'Withdrawal', details: `Paid by admin`, timestamp: serverTimestamp() }); showToast("Withdrawal marked as paid and balance reset!", 'success'); } catch (err) { showToast("Failed to process. " + err.message, "error"); } });
         document.querySelectorAll('.modal-close').forEach(btn => btn.addEventListener('click', () => btn.closest('.modal-overlay').classList.remove('active')));
-        const sidebar = document.querySelector('.sidebar'); const sidebarOverlay = document.querySelector('.sidebar-overlay');
-        document.getElementById('menu-toggle').addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
-        sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
-        document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); document.querySelector('.nav-link.active')?.classList.remove('active'); link.classList.add('active'); document.querySelector('.view.active')?.classList.remove('active'); document.getElementById(link.dataset.view).classList.add('active'); if (window.innerWidth <= 992) { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); } }); });
-        const themeToggle = document.getElementById('theme-toggle'); const applyTheme = (theme) => { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('theme', theme); themeToggle.innerHTML = theme === 'dark' ? "<i class='bx bxs-moon'></i>" : "<i class='bx bx-sun'></i>"; };
-        themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); });
-        applyTheme(localStorage.getItem('theme') || 'light');
+
+        // INIT & CORE LOGIC
+        const initAdminPanel = () => {
+            onValue(ref(db, 'products'), (s) => { renderProducts(s.val()); updateDashboardStats(); });
+            onValue(ref(db, 'orders'), (s) => { renderOrders(s.val()); updateDashboardStats(); });
+            onValue(ref(db, 'users'), (s) => { renderUsers(s.val()); updateDashboardStats(); });
+            onValue(ref(db, 'withdrawals'), (s) => renderWithdrawals(s.val()));
+            onValue(ref(db, 'sitePromotions'), (s) => renderChannelPromotions(s.val()));
+        };
+        const updateDashboardStats = () => { get(ref(db, 'products')).then(s => { document.getElementById('total-products').textContent = s.exists() ? Object.keys(s.val()).length : 0; }); get(ref(db, 'users')).then(s => { document.getElementById('total-users').textContent = s.exists() ? Object.keys(s.val()).length : 0; }); get(ref(db, 'orders')).then(s => { if (!s.exists()) { document.getElementById('total-orders').textContent = 0; document.getElementById('total-revenue').textContent = '0'; return; } const orders = s.val(); const orderCount = Object.keys(orders).length; const totalRevenue = Object.values(orders).filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + Number(o.totalAmount || 0), 0); document.getElementById('total-orders').textContent = orderCount; document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString('en-IN'); }); };
+        onAuthStateChanged(auth, (user) => { if (user && ADMIN_UIDS.includes(user.uid)) { document.getElementById('login-container').style.display = 'none'; document.getElementById('admin-panel').style.display = 'flex'; initAdminPanel(); } else { document.getElementById('login-container').style.display = 'flex'; document.getElementById('admin-panel').style.display = 'none'; if (user) { signOut(auth); } } });
+        document.getElementById('login-btn').addEventListener('click', async () => { const btn = document.getElementById('login-btn'); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; if (!email || !password) return showToast("Please enter email and password.", "error"); btn.disabled = true; btn.querySelector('.btn-text').textContent = "Logging In..."; btn.querySelector('.bx-loader-alt').style.display = 'inline-block'; try { const uc = await signInWithEmailAndPassword(auth, email, password); if (!ADMIN_UIDS.includes(uc.user.uid)) { showToast("You are not an admin.", "error"); await signOut(auth); } } catch (error) { showToast("Invalid credentials.", "error"); } finally { btn.disabled = false; btn.querySelector('.btn-text').textContent = "Login"; btn.querySelector('.bx-loader-alt').style.display = 'none'; } });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+        
+        // Product Management (CRUD)
+        const productModal = document.getElementById('product-modal'); const productForm = document.getElementById('product-form'); const saveProductBtn = document.getElementById('save-product-btn'); document.getElementById('add-product-btn').addEventListener('click', () => { productForm.reset(); document.getElementById('product-id').value = ''; document.getElementById('product-modal-title').textContent = "Add New Product"; saveProductBtn.textContent = "Save Product"; productModal.classList.add('active'); }); productForm.addEventListener('submit', async (e) => { e.preventDefault(); const id = document.getElementById('product-id').value; const productData = { name: document.getElementById('product-name').value.trim(), price: Number(document.getElementById('product-price').value), imageUrl: document.getElementById('product-image-url').value.trim() }; saveProductBtn.disabled = true; saveProductBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving..."; try { if (id) { await set(ref(db, `products/${id}`), productData); showToast('Product updated!', 'success'); } else { await push(ref(db, 'products'), productData); showToast('Product added!', 'success'); } productModal.classList.remove('active'); } catch (err) { showToast('Error: ' + err.message, 'error'); } finally { saveProductBtn.disabled = false; saveProductBtn.innerHTML = id ? 'Save Changes' : 'Save Product'; } }); document.getElementById('products-table-body').addEventListener('click', async (e) => { const target = e.target.closest('button'); if (!target) return; const productId = target.dataset.id; if (!productId) return; if (target.classList.contains('edit-product-btn')) { onValue(ref(db, `products/${productId}`), (snapshot) => { if (snapshot.exists()) { const data = snapshot.val(); document.getElementById('product-id').value = productId; document.getElementById('product-name').value = data.name; document.getElementById('product-price').value = data.price; document.getElementById('product-image-url').value = data.imageUrl; document.getElementById('product-modal-title').textContent = "Edit Product"; saveProductBtn.textContent = "Save Changes"; productModal.classList.add('active'); } }, { once: true }); } if (target.classList.contains('delete-product-btn')) { if (confirm('Are you sure?')) { try { await remove(ref(db, `products/${productId}`)); showToast('Product deleted.', 'success'); } catch (err) { showToast('Error deleting.', 'error'); } } } });
+
+        // Channel Promotion Management
+        const channelModal = document.getElementById('channel-modal'); const channelForm = document.getElementById('channel-form'); const saveChannelBtn = document.getElementById('save-channel-btn');
+        document.getElementById('add-channel-btn').addEventListener('click', () => { channelForm.reset(); document.getElementById('channel-id').value = ''; document.getElementById('channel-modal-title').textContent = "Add New Channel"; saveChannelBtn.textContent = "Save Channel"; channelModal.classList.add('active'); });
+        channelForm.addEventListener('submit', async (e) => { e.preventDefault(); const id = document.getElementById('channel-id').value; const channelData = { channelName: document.getElementById('channel-name').value.trim(), channelUrl: document.getElementById('channel-url').value.trim() }; saveChannelBtn.disabled = true; saveChannelBtn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i> Saving..."; try { const dbRef = id ? ref(db, `sitePromotions/${id}`) : push(ref(db, 'sitePromotions')); await set(dbRef, channelData); showToast(id ? 'Channel updated!' : 'Channel added!', 'success'); channelModal.classList.remove('active'); } catch (err) { showToast('Error: ' + err.message, 'error'); } finally { saveChannelBtn.disabled = false; saveChannelBtn.innerHTML = 'Save Channel'; } });
+        document.getElementById('channel-promotion-table-body').addEventListener('click', async (e) => { const target = e.target.closest('button'); if (!target) return; const channelId = target.dataset.id; if (!channelId) return; if (target.classList.contains('edit-channel-btn')) { const data = allChannelPromotions[channelId]; document.getElementById('channel-id').value = channelId; document.getElementById('channel-name').value = data.channelName; document.getElementById('channel-url').value = data.channelUrl; document.getElementById('channel-modal-title').textContent = "Edit Channel"; saveChannelBtn.textContent = "Save Changes"; channelModal.classList.add('active'); } if (target.classList.contains('delete-channel-btn')) { if (confirm('Are you sure?')) { try { await remove(ref(db, `sitePromotions/${channelId}`)); showToast('Channel deleted.', 'success'); } catch (err) { showToast('Error deleting.', 'error'); } } } });
+
+        // UI Listeners (Sidebar, Theme)
+        const sidebar = document.querySelector('.sidebar'); const sidebarOverlay = document.querySelector('.sidebar-overlay'); document.getElementById('menu-toggle').addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }); sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }); document.querySelectorAll('.nav-link').forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); document.querySelector('.nav-link.active')?.classList.remove('active'); link.classList.add('active'); document.querySelector('.view.active')?.classList.remove('active'); document.getElementById(link.dataset.view).classList.add('active'); if (window.innerWidth <= 992) { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); } }); }); const themeToggle = document.getElementById('theme-toggle'); const applyTheme = (theme) => { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('theme', theme); themeToggle.innerHTML = theme === 'dark' ? "<i class='bx bxs-moon'></i>" : "<i class='bx bx-sun'></i>"; }; themeToggle.addEventListener('click', () => { const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); applyTheme(localStorage.getItem('theme') || 'light');
     </script>
 </body>
 </html>
